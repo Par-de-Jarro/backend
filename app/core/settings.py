@@ -6,5 +6,5 @@ SILENT_ENVIROMENTS = config("SILENT_ENVIROMENTS", default=("staging", "prod", "p
 
 SQLALCHEMY_DATABASE_URL = config(
     "SQLALCHEMY_DATABASE_URL",
-    default="postgresql://postgres:@localhost:5432/clicampo_test",
+    default="postgresql://postgres:@localhost:5432/par_de_jarro_test",
 )
