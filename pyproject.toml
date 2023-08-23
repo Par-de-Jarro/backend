@@ -1,0 +1,44 @@
+[tool.poetry]
+name = "fast-api-template"
+version = "0.2.0"
+description = ""
+authors = ["Antonio Bertino de Vasconcelos Cabral Neto <antoniontv18@gmail>"]
+
+[tool.poetry.dependencies]
+python = "~3.10"
+fastapi = "~0.75.1"
+SQLAlchemy = "~1.4.25"
+psycopg2-binary = "~2.9.1"
+prettyconf = "^2.2.1"
+alembic = "^1.7.4"
+alembic-autogen-check = "^1.1.1"
+tenacity = "^8.0.1"
+uvicorn = "^0.15.0"
+PyJWT = "^2.3.0"
+brotli-asgi = "^1.1.0"
+pendulum = "^2.1.2"
+
+[tool.poetry.dev-dependencies]
+sqlacodegen = "^2.3.0"
+pytest-dotenv = "^0.5.2"
+SQLAlchemy-Utils = "^0.37.9"
+black = "^22.3.0"
+isort = "^5.10.1"
+fastapi = {extras = ["test"], version = "^0.75.1"}
+pre-commit = "^2.18.1"
+responses = "^0.20.0"
+
+[tool.black]
+line-length = 100
+target-version = ["py310"]
+
+[tool.isort]
+line_length = 100
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

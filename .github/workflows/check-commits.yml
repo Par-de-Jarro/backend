@@ -1,0 +1,17 @@
+name: Lint commits
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Lint conventional commits
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: clicampo/action-conventional-commits@9032ae5dbaf8e0b0c74d8a875ad012725d1d8b11
+        with:
+            github-token: ${{ secrets.GITHUB_TOKEN }}
+            check-pr-title: true
