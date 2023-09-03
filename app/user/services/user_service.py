@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from app.common.repositories.base import BaseRepository
 from app.common.services.base import BaseService
 from app.common.utils import password as password_utils
-from app.user.schemas import UserCreate, UserCreateHashedPassword, UserUpdate, UserView
+from app.user.schemas.user import UserCreate, UserCreateHashPassword, UserUpdate, UserView
 
 
 class UserService(BaseService[UserCreate, UserUpdate, UserView]):
@@ -13,7 +13,7 @@ class UserService(BaseService[UserCreate, UserUpdate, UserView]):
         super().__init__(repository=BaseRepository, db=db)
 
     def create(self, create: UserCreate) -> UserView:
-        user_create = UserCreateHashedPassword(
+        user_create = UserCreateHashPassword(
             **create.dict(), password_hash=password_utils.create_hash(create.password)
         )
 
