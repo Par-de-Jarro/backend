@@ -15,12 +15,6 @@ class UserRepository(BaseRepository):
             db=db,
         )
 
-    def get_by_id(self, id: UUID) -> models.User:
-        user = self.db.query(models.User).filter(models.User.id == id).first()
-        if user is None:
-            raise RecordNotFoundException(id, models.User)
-        return user
-
     def get_by_email(self, email: str) -> models.User:
         user = self.db.query(models.User).filter(models.User.email == email).first()
         if user is None:
