@@ -60,7 +60,10 @@ jobs:
 
       - name: Install dependencies
         if: steps.cached-venv.cache-hit != 'true'
-        run: poetry install --no-interaction --no-root
+        run: |
+          poetry install --no-interaction --no-root 
+          pip install bcrypt==3.2.0
+        
 
       - name: Lint check
         run: |
