@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from uuid import UUID
 
 from fastapi import APIRouter, Depends
@@ -41,45 +41,21 @@ def get_user_by_id(id: UUID, service: UserService = Depends(deps.get_user_servic
     return service.get_by_id(id)
 
 
-@router.get(
-    "/",
-    response_model=List[UserView],
-    dependencies=[Depends(deps.hass_access)],
-)
-def get_user_by_email(email: str, service: UserService = Depends(deps.get_user_service)):
-    try:
-        service.get_user_by_email(email)
-    except Exception as e:
-        raise e
-    return service.get_user_by_email(email)
-
-
-@router.get(
-    "/",
-    response_model=List[UserView],
-    dependencies=[Depends(deps.hass_access)],
-)
-def get_user_by_document_id(
-    document_id: str, service: UserService = Depends(deps.get_user_service)
+@router.get("/", response_model=List[UserView], dependencies=[Depends(deps.hass_access)])
+def get_users(
+    email: Optional[str] = None,
+    document_id: Optional[str] = None,
+    cellphone: Optional[str] = None,
+    service: UserService = Depends(deps.get_user_service),
 ):
-    try:
-        service.get_user_by_document_id(document_id)
-    except Exception as e:
-        raise e
-    return service.get_user_by_document_id(document_id)
-
-
-@router.get(
-    "/",
-    response_model=List[UserView],
-    dependencies=[Depends(deps.hass_access)],
-)
-def get_user_by_cellphone(cellphone: str, service: UserService = Depends(deps.get_user_service)):
-    try:
-        service.get_user_by_cellphone(cellphone)
-    except Exception as e:
-        raise e
-    return service.get_user_by_cellphone(cellphone)
+    if email:
+        return service.get_user_by_email(email)
+    elif document_id:
+        return service.get_user_by_document_id(document_id)
+    elif cellphone:
+        return service.get_user_by_cellphone(cellphone)
+    else:
+        return "No user found"
 
 
 @router.put("/", response_model=UserView)
