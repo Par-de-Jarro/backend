@@ -47,8 +47,6 @@ COPY ./tests/ $PYSETUP_PATH/tests
 WORKDIR $PYSETUP_PATH
 
 RUN useradd user -u 1000
-RUN pip install bcrypt==3.2.0
 USER user
 EXPOSE 8000
 CMD ["/bin/bash", "/opt/service/scripts/pre-start.sh"]
-
