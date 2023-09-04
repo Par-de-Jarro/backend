@@ -2,15 +2,15 @@ from uuid import UUID
 
 from sqlalchemy.orm import Session
 
-from app.common.repositories.base import BaseRepository
 from app.common.services.base import BaseService
 from app.common.utils import password as password_utils
+from app.user.repositories.user_repository import UserRepository
 from app.user.schemas.user import UserCreate, UserCreateHashPassword, UserUpdate, UserView
 
 
 class UserService(BaseService[UserCreate, UserUpdate, UserView]):
     def __init__(self, db: Session):
-        super().__init__(repository=BaseRepository, db=db)
+        super().__init__(repository=UserRepository, db=db)
 
     def create(self, create: UserCreate) -> UserView:
         user_create = UserCreateHashPassword(

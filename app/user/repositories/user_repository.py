@@ -9,7 +9,11 @@ from app.common.repositories.base import BaseRepository
 
 class UserRepository(BaseRepository):
     def __init__(self, db: Session):
-        super().__init__(db)
+        super(UserRepository, self).__init__(
+            models.User.id_user,
+            model_class=models.User,
+            db=db,
+        )
 
     def get_by_id(self, id: UUID) -> models.User:
         user = self.db.query(models.User).filter(models.User.id == id).first()
