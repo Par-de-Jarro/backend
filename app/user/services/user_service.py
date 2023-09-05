@@ -1,7 +1,11 @@
 from typing import List
+from uuid import UUID
 
+from fastapi import UploadFile
 from sqlalchemy.orm import Session
 
+from app.common.exceptions import RecordNotFoundException
+from app.common.repositories.aws_repository import AWSRepository
 from app.common.services.base import BaseService
 from app.common.utils import password as password_utils
 from app.user.repositories.user_repository import UserRepository
@@ -20,6 +24,7 @@ class UserService(BaseService[UserCreate, UserUpdate, UserView]):
 
     def __init__(self, db: Session):
         super().__init__(repository=UserRepository, db=db)
+        self.aws_repository = AWSRepository(base_path="user")
 
     def create(self, create: UserCreate) -> UserView:
         create = UserCreateHashPassword(
@@ -50,3 +55,12 @@ class UserService(BaseService[UserCreate, UserUpdate, UserView]):
             query = query.filter_by_document_id(document_id=params.document_id)
 
         return query.all()
+
+    def save_file(self, id_user: UUID, uploaded_file: UploadFile) -> UserView:
+        if not (self.get_by_id(id_user=id_user)):
+            print("NO")
+            raise RecordNotFoundException()
+        profile_image_url = self.aws_repository.save_file(
+            id_obj=id_user, uploaded_file=uploaded_file
+        )
+        return self.update(id_user=id_user, update=UserUpdate(profile_img=profile_image_url))
