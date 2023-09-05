@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Text, text
+from sqlalchemy import Column, Date, String, Text, text
 from sqlalchemy.dialects.postgresql import UUID
 
 from app.common.models.table_model import TableModel
@@ -28,4 +28,10 @@ class User(Base, TableModel):
 
     document_id = Column(String(11), nullable=False, unique=True)
 
-    profile_img = Column(Text, nullable=False)
+    profile_img = Column(Text, nullable=True)
+
+    bio = Column(String(500), nullable=True)
+
+    birthdate = Column(Date, nullable=False)
+
+    course = Column(String(50), nullable=True)

@@ -1,3 +1,4 @@
+from datetime import date
 from typing import Optional
 from uuid import UUID
 
@@ -15,7 +16,10 @@ class UserBase(BaseModel):
     email: EmailStr
     cellphone: str = cellphone_field
     document_id: str = document_id_field
-    profile_img: str
+    profile_img: Optional[str]
+    birthdate: date
+    course: str
+    bio: str
 
 
 @omit("profile_img")
@@ -30,6 +34,9 @@ class UserUpdate(UserBase):
     document_id: Optional[str]
     profile_img: Optional[str]
     password: Optional[str]
+    birthdate: Optional[date]
+    course: Optional[str]
+    bio: Optional[str]
 
 
 @omit("password")
