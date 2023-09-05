@@ -20,12 +20,11 @@ def create_user(user: UserCreate, service: UserService = Depends(deps.get_user_s
     response_model=List[UserView],
     dependencies=[Depends(deps.hass_access)],
 )
-def get_all(params: UserSearchParams, service: UserService = Depends(deps.get_user_service)):
-    try:
-        service.get_all(params=params)
-    except Exception as e:
-        raise e
-    return service.get_all()
+def get_all(
+    filters: UserSearchParams = Depends(UserSearchParams.params()),
+    service: UserService = Depends(deps.get_user_service),
+):
+    return service.get_all(params=filters)
 
 
 @router.get(
@@ -34,20 +33,14 @@ def get_all(params: UserSearchParams, service: UserService = Depends(deps.get_us
     dependencies=[Depends(deps.hass_access)],
 )
 def get_by_id(id_user: UUID, service: UserService = Depends(deps.get_user_service)):
-    try:
-        service.get_by_id(id_user=id_user)
-    except Exception as e:
-        raise e
+    return service.get_by_id(id_user=id_user)
 
 
 @router.put("/{id_user}", response_model=UserView)
 def update_user(
     id_user: UUID, update: UserUpdate, service: UserService = Depends(deps.get_user_service)
 ):
-    try:
-        service.update(id_user=id_user, update=update)
-    except Exception as e:
-        raise e
+    return service.update(id_user=id_user, update=update)
 
 
 @router.delete(

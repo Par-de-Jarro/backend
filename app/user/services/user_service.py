@@ -47,6 +47,6 @@ class UserService(BaseService[UserCreate, UserUpdate, UserView]):
             query = query.filter_by_email(email=params.email)
 
         if params.document_id:
-            query = query.filter_by_document_id(email=params.document_id)
+            query = query.filter_by_document_id(document_id=params.document_id)
 
         return query.all()
