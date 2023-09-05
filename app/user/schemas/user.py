@@ -18,6 +18,7 @@ class UserBase(BaseModel):
     profile_img: str
 
 
+@omit("profile_img")
 class UserCreate(UserBase):
     password: str
 
