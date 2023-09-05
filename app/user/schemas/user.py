@@ -19,27 +19,22 @@ class UserCreate(UserBase):
 
 
 class UserUpdate(UserBase):
-    name: str
-    email: EmailStr
-    cellphone: str
-    document_id: str
-    profile_img: str
-
-
-class UserUpdatePassWord(UserBase):
+    name: Optional[str]
+    email: Optional[EmailStr]
+    cellphone: Optional[str]
+    document_id: Optional[str]
+    profile_img: Optional[str]
     password: Optional[str]
 
 
-class UserCreateHashPassword(UserBase):
+class UserUpdateHashPassword(UserUpdate):
+    password_hash: str
+
+
+class UserCreateHashPassword(UserCreate):
     password_hash: str
 
 
 class UserView(UserBase):
-    name: str
-    email: EmailStr
-    cellphone: str
-    document_id: str
-    profile_img: str
-
     class Config:
         orm_mode = True

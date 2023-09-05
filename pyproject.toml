@@ -18,6 +18,8 @@ PyJWT = "^2.3.0"
 brotli-asgi = "^1.1.0"
 pendulum = "^2.1.2"
 bcrypt = "^4.0.1"
+jose = "^1.0.0"
+python-jose = "^3.3.0"
 
 [tool.poetry.dev-dependencies]
 sqlacodegen = "^2.3.0"

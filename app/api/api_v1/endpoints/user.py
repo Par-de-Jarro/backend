@@ -1,17 +1,17 @@
-from typing import List, Optional
+from typing import List
 from uuid import UUID
 
 from fastapi import APIRouter, Depends
 
 from app.api import deps
-from app.user.schemas.user import UserCreate, UserUpdate, UserUpdatePassWord, UserView
+from app.user.schemas.user import UserCreate, UserUpdate, UserView
 from app.user.services.user_service import UserService
 
 router = APIRouter()
 
 
 @router.post("/", response_model=UserView)
-def create_user(user: UserCreate, service: UserService = Depends(deps.get_service)):
+def create_user(user: UserCreate, service: UserService = Depends(deps.get_user_service)):
     return service.create(user)
 
 
@@ -20,7 +20,7 @@ def create_user(user: UserCreate, service: UserService = Depends(deps.get_servic
     response_model=List[UserView],
     dependencies=[Depends(deps.hass_access)],
 )
-def get_all_users(service: UserService = Depends(deps.get_user_service)):
+def get_all(service: UserService = Depends(deps.get_user_service)):
     try:
         service.get_all()
     except Exception as e:
@@ -29,33 +29,15 @@ def get_all_users(service: UserService = Depends(deps.get_user_service)):
 
 
 @router.get(
-    "/",
+    "/{id_user}",
     response_model=List[UserView],
     dependencies=[Depends(deps.hass_access)],
 )
-def get_user_by_id(id: UUID, service: UserService = Depends(deps.get_user_service)):
+def get_by_id(id_user: UUID, service: UserService = Depends(deps.get_user_service)):
     try:
-        service.get_by_id(id)
+        service.get_by_id(id_user=id_user)
     except Exception as e:
         raise e
-    return service.get_by_id(id)
-
-
-@router.get("/", response_model=List[UserView], dependencies=[Depends(deps.hass_access)])
-def get_users(
-    email: Optional[str] = None,
-    document_id: Optional[str] = None,
-    cellphone: Optional[str] = None,
-    service: UserService = Depends(deps.get_user_service),
-):
-    if email:
-        return service.get_user_by_email(email)
-    elif document_id:
-        return service.get_user_by_document_id(document_id)
-    elif cellphone:
-        return service.get_user_by_cellphone(cellphone)
-    else:
-        return "No user found"
 
 
 @router.put("/", response_model=UserView)
@@ -64,14 +46,6 @@ def update_user(id: UUID, user: UserUpdate, service: UserService = Depends(deps.
         service.update(id, user)
     except Exception as e:
         raise e
-    return service.update(id, user)
-
-
-@router.put("/", response_model=UserView)
-def update_password(
-    id: UUID, user: UserUpdatePassWord, service: UserService = Depends(deps.get_user_service)
-):
-    return service.update_password(id, user)
 
 
 @router.delete(
