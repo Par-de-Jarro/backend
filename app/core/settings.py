@@ -12,4 +12,4 @@ SQLALCHEMY_DATABASE_URL = config(
 
 JWT_REFRESH_SECRET_KEY = config("JWT_REFRESH_SECRET_KEY", default="refresh")
 JWT_SECRET_KEY = config("JWT_SECRET_KEY", default="secret")
-AWS_BUCKET_NAME = config("AWS_BUCKET_NAME")
+AWS_BUCKET_NAME = config("AWS_BUCKET_NAME", default="par-de-jarro")
