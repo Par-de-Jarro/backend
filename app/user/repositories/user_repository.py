@@ -3,8 +3,8 @@ from typing import Optional
 from sqlalchemy.orm import Session
 
 import app.common.models as models
-from app.common.models.user import User
 from app.common.repositories.base import BaseFinder, BaseRepository
+from app.user.models.user import User
 
 
 class UserFinder(BaseFinder[User]):

@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta
-from typing import List
 from uuid import UUID
 
 from jose import jwt
@@ -7,7 +6,6 @@ from pydantic import ValidationError
 
 from app.auth.schemas import AuthResponse, SessionCreate, TokenPayload
 from app.common.exceptions import AuthException, AuthExceptionHTTPException, RecordNotFoundException
-from app.common.models.user import User
 from app.common.utils.password import check_password
 from app.core.settings import JWT_REFRESH_SECRET_KEY, JWT_SECRET_KEY
 from app.user.schemas.user import UserSearchParams
@@ -48,12 +46,12 @@ class AuthService:
         return True
 
     def create_tokens(self, session_create: SessionCreate) -> AuthResponse:
-        users: List[User] = self.user_service.get_all(UserSearchParams(email=session_create.email))
+        users = self.user_service.get_all(UserSearchParams(email=session_create.email))
 
         if not users:
             raise AuthException(detail="User not registered")
 
-        user: User = users[0]
+        user = users[0]
 
         if not (check_password(session_create.password, user.password_hash)):
             raise AuthException(detail="Wrong password")
@@ -64,7 +62,7 @@ class AuthService:
             user=user,
         )
 
-    def create_access_token(self, user: User) -> str:
+    def create_access_token(self, user) -> str:
         expires_delta = datetime.utcnow() + timedelta(minutes=self.ACCESS_TOKEN_EXPIRE_MINUTES)
 
         to_encode = TokenPayload(
@@ -79,7 +77,7 @@ class AuthService:
 
         return encoded_jwt
 
-    def create_refresh_token(self, user: User) -> str:
+    def create_refresh_token(self, user) -> str:
         expires_delta = datetime.utcnow() + timedelta(minutes=self.ACCESS_TOKEN_EXPIRE_MINUTES)
 
         to_encode = TokenPayload(
