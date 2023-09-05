@@ -1,4 +1,5 @@
 from typing import Optional
+from uuid import UUID
 
 from fastapi_qp import QueryParam
 from pydantic import BaseModel, EmailStr, Field
@@ -41,6 +42,8 @@ class UserCreateHashPassword(UserCreate):
 
 
 class UserView(UserBase):
+    id_user: UUID
+
     class Config:
         orm_mode = True
 
