@@ -336,6 +336,17 @@ doc = ["mdx-include (>=1.4.1,<2.0.0)", "mkdocs (>=1.1.2,<2.0.0)", "mkdocs-markdo
 test = ["anyio[trio] (>=3.2.1,<4.0.0)", "black (==22.3.0)", "databases[sqlite] (>=0.3.2,<0.6.0)", "email_validator (>=1.1.1,<2.0.0)", "flake8 (>=3.8.3,<4.0.0)", "flask (>=1.1.2,<3.0.0)", "httpx (>=0.14.0,<0.19.0)", "isort (>=5.0.6,<6.0.0)", "mypy (==0.910)", "orjson (>=3.2.1,<4.0.0)", "peewee (>=3.13.3,<4.0.0)", "pytest (>=6.2.4,<7.0.0)", "pytest-cov (>=2.12.0,<4.0.0)", "python-multipart (>=0.0.5,<0.0.6)", "requests (>=2.24.0,<3.0.0)", "sqlalchemy (>=1.3.18,<1.5.0)", "types-dataclasses (==0.6.5)", "types-orjson (==3.6.2)", "types-ujson (==4.2.1)", "ujson (>=4.0.1,!=4.0.2,!=4.1.0,!=4.2.0,!=4.3.0,!=5.0.0,!=5.1.0,<6.0.0)"]
 
 [[package]]
+name = "fastapi-qp"
+version = "0.2.0"
+description = ""
+category = "main"
+optional = false
+python-versions = ">=3.7,<4.0"
+
+[package.dependencies]
+fastapi = ">=0.75.1"
+
+[[package]]
 name = "filelock"
 version = "3.7.0"
 description = "A platform independent file lock."
@@ -1207,7 +1218,7 @@ watchdog = ["watchdog"]
 [metadata]
 lock-version = "1.1"
 python-versions = "~3.10"
-content-hash = "b384544bba3d17942f205c42991735ad3d398c29da4ec070ba4d6b45e140d036"
+content-hash = "d69c25ac8362563786e9e5fd16f1044b9ecd1fe53447f807988c397112f393a7"
 
 [metadata.files]
 aiosqlite = [
@@ -1527,6 +1538,10 @@ email-validator = [
 fastapi = [
     {file = "fastapi-0.75.2-py3-none-any.whl", hash = "sha256:a70d31f4249b6b42dbe267667d22f83af645b2d857876c97f83ca9573215784f"},
     {file = "fastapi-0.75.2.tar.gz", hash = "sha256:b5dac161ee19d33346040d3f44d8b7a9ac09b37df9efff95891f5e7641fa482f"},
+]
+fastapi-qp = [
+    {file = "fastapi_qp-0.2.0-py3-none-any.whl", hash = "sha256:b3dd5c2f7a0ca87ed698cad9ecddd8302eea84ba0a44e39613d5abb13cf7b21c"},
+    {file = "fastapi_qp-0.2.0.tar.gz", hash = "sha256:215a0e9592ee6a8ac47c31599f2b302f43f6d0ea2c0e260c0e596ceae86f6a07"},
 ]
 filelock = [
     {file = "filelock-3.7.0-py3-none-any.whl", hash = "sha256:c7b5fdb219b398a5b28c8e4c1893ef5f98ece6a38c6ab2c22e26ec161556fed6"},

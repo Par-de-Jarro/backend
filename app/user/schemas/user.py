@@ -1,8 +1,11 @@
 from typing import Optional
 
+from fastapi_qp import QueryParam
 from pydantic import BaseModel, EmailStr, Field
 
-cellphone_field = Field(min_length=13, max_length=13)
+from app.common.schemas import omit
+
+cellphone_field = Field(min_length=11, max_length=11)
 document_id_field = Field(min_length=11, max_length=11)
 
 
@@ -27,10 +30,12 @@ class UserUpdate(UserBase):
     password: Optional[str]
 
 
+@omit("password")
 class UserUpdateHashPassword(UserUpdate):
     password_hash: str
 
 
+@omit("password")
 class UserCreateHashPassword(UserCreate):
     password_hash: str
 
@@ -38,3 +43,9 @@ class UserCreateHashPassword(UserCreate):
 class UserView(UserBase):
     class Config:
         orm_mode = True
+
+
+class UserSearchParams(BaseModel, QueryParam):
+    email: Optional[EmailStr]
+    cellphone: Optional[str] = cellphone_field
+    document_id: Optional[str] = document_id_field

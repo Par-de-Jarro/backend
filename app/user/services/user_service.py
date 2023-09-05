@@ -1,3 +1,5 @@
+from typing import List
+
 from sqlalchemy.orm import Session
 
 from app.common.services.base import BaseService
@@ -6,6 +8,7 @@ from app.user.repositories.user_repository import UserRepository
 from app.user.schemas.user import (
     UserCreate,
     UserCreateHashPassword,
+    UserSearchParams,
     UserUpdate,
     UserUpdateHashPassword,
     UserView,
@@ -20,7 +23,8 @@ class UserService(BaseService[UserCreate, UserUpdate, UserView]):
 
     def create(self, create: UserCreate) -> UserView:
         create = UserCreateHashPassword(
-            **create.dict(), password_hash=password_utils.create_hash(create.password)
+            **create.dict(exclude={"password"}),
+            password_hash=password_utils.create_hash(create.password),
         )
 
         return self.repository.add(create)
@@ -32,3 +36,17 @@ class UserService(BaseService[UserCreate, UserUpdate, UserView]):
             )
 
         return super().update(update, **kwargs)
+
+    def get_all(self, params: UserSearchParams) -> List[UserView]:
+        query = self.repository.finder
+
+        if params.cellphone:
+            query = query.filter_by_cellphone(cellphone=params.cellphone)
+
+        if params.email:
+            query = query.filter_by_email(email=params.email)
+
+        if params.document_id:
+            query = query.filter_by_document_id(email=params.document_id)
+
+        return query.all()

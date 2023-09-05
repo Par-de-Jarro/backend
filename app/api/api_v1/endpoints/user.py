@@ -4,7 +4,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends
 
 from app.api import deps
-from app.user.schemas.user import UserCreate, UserUpdate, UserView
+from app.user.schemas.user import UserCreate, UserSearchParams, UserUpdate, UserView
 from app.user.services.user_service import UserService
 
 router = APIRouter()
@@ -20,9 +20,9 @@ def create_user(user: UserCreate, service: UserService = Depends(deps.get_user_s
     response_model=List[UserView],
     dependencies=[Depends(deps.hass_access)],
 )
-def get_all(service: UserService = Depends(deps.get_user_service)):
+def get_all(params: UserSearchParams, service: UserService = Depends(deps.get_user_service)):
     try:
-        service.get_all()
+        service.get_all(params=params)
     except Exception as e:
         raise e
     return service.get_all()
@@ -30,7 +30,7 @@ def get_all(service: UserService = Depends(deps.get_user_service)):
 
 @router.get(
     "/{id_user}",
-    response_model=List[UserView],
+    response_model=UserView,
     dependencies=[Depends(deps.hass_access)],
 )
 def get_by_id(id_user: UUID, service: UserService = Depends(deps.get_user_service)):
@@ -40,10 +40,12 @@ def get_by_id(id_user: UUID, service: UserService = Depends(deps.get_user_servic
         raise e
 
 
-@router.put("/", response_model=UserView)
-def update_user(id: UUID, user: UserUpdate, service: UserService = Depends(deps.get_user_service)):
+@router.put("/{id_user}", response_model=UserView)
+def update_user(
+    id_user: UUID, update: UserUpdate, service: UserService = Depends(deps.get_user_service)
+):
     try:
-        service.update(id, user)
+        service.update(id_user=id_user, update=update)
     except Exception as e:
         raise e
 
@@ -52,9 +54,8 @@ def update_user(id: UUID, user: UserUpdate, service: UserService = Depends(deps.
     "/{id_user}",
     dependencies=[Depends(deps.hass_access)],
 )
-def delete_user(id: UUID, service: UserService = Depends(deps.get_user_service)):
+def delete_user(id_user: UUID, service: UserService = Depends(deps.get_user_service)):
     try:
-        service.delete(id)
+        service.delete(id_user=id_user)
     except Exception as e:
         raise e
-    return {"message": "User deleted successfully"}

@@ -8,3 +8,7 @@ SQLALCHEMY_DATABASE_URL = config(
     "SQLALCHEMY_DATABASE_URL",
     default="postgresql://postgres:@localhost:5432/par_de_jarro_test",
 )
+
+
+JWT_REFRESH_SECRET_KEY = config("JWT_REFRESH_SECRET_KEY", default="refresh")
+JWT_SECRET_KEY = config("JWT_SECRET_KEY", default="secret")
