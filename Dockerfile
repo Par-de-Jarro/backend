@@ -48,4 +48,5 @@ WORKDIR $PYSETUP_PATH
 
 RUN useradd user -u 1000
 USER user
+EXPOSE 8000
 CMD ["/bin/bash", "/opt/service/scripts/pre-start.sh"]

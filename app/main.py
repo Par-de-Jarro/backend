@@ -21,7 +21,7 @@ def custom_json_encoder(self, obj):
 JSONEncoder.default = custom_json_encoder
 
 app = FastAPI(
-    title="Todo List API",
+    title="Par de Jarro API",
 )
 
 app.include_router(v1_api_router)
