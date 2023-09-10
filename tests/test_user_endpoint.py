@@ -2,6 +2,8 @@ import json
 
 import pytest
 
+from app.user.models.user import User
+
 from .base_client import BaseClient
 
 
@@ -48,7 +50,16 @@ def test_create_user(user_client):
 
 
 def test_update_user(user, session, user_client):
-    session.add(user)
+    user_obj = User(
+        name=user["name"],
+        email=user["email"],
+        cellphone=user["cellphone"],
+        document_id=user["document_id"],
+        birthdate=user["birthdate"],
+        course=user["course"],
+        bio=user["bio"],
+    )
+    session.add(user_obj)
     session.commit()
     data = {
         "name": "Ricardinho",
@@ -66,14 +77,32 @@ def test_update_user(user, session, user_client):
 
 
 def test_delete_user(user, session, user_client):
-    session.add(user)
+    user_obj = User(
+        name=user["name"],
+        email=user["email"],
+        cellphone=user["cellphone"],
+        document_id=user["document_id"],
+        birthdate=user["birthdate"],
+        course=user["course"],
+        bio=user["bio"],
+    )
+    session.add(user_obj)
     session.commit()
     response = user_client.delete(user.id_user)
     assert response.status_code == 200
 
 
 def test_delete_user_not_exists(user, session, user_client):
-    session.add(user)
+    user_obj = User(
+        name=user["name"],
+        email=user["email"],
+        cellphone=user["cellphone"],
+        document_id=user["document_id"],
+        birthdate=user["birthdate"],
+        course=user["course"],
+        bio=user["bio"],
+    )
+    session.add(user_obj)
     session.commit()
     response = user_client.delete("123456789")
     assert response.status_code == 404
@@ -81,7 +110,16 @@ def test_delete_user_not_exists(user, session, user_client):
 
 
 def test_get_user_by_id(user, session, user_client):
-    session.add(user)
+    user_obj = User(
+        name=user["name"],
+        email=user["email"],
+        cellphone=user["cellphone"],
+        document_id=user["document_id"],
+        birthdate=user["birthdate"],
+        course=user["course"],
+        bio=user["bio"],
+    )
+    session.add(user_obj)
     session.commit()
     response = user_client.get(user.id_user)
     assert response.status_code == 200
@@ -95,7 +133,16 @@ def test_get_user_by_id(user, session, user_client):
 
 
 def test_list_users(user, session, user_client):
-    session.add(user)
+    user_obj = User(
+        name=user["name"],
+        email=user["email"],
+        cellphone=user["cellphone"],
+        document_id=user["document_id"],
+        birthdate=user["birthdate"],
+        course=user["course"],
+        bio=user["bio"],
+    )
+    session.add(user_obj)
     session.commit()
     response = user_client.list()
     assert response.status_code == 200
