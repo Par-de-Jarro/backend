@@ -20,6 +20,9 @@ def user(make_user):
     return make_user()
 
 
+# Compare this snippet from tests/test_user_endpoint.py:
+
+
 def test_create_user(user_client):
     data = {
         "name": "Ricardinho",
