@@ -16,11 +16,23 @@ def user_client(client):
 
 
 @pytest.fixture
+def make_user():
+    data = {
+        "name": "Ricardinho",
+        "email": "teste@email.com",
+        "cellphone": "11999999999",
+        "document_id": "12345678901",
+        "birthdate": "1990-04-13",
+        "course": "Ciência da Computação",
+        "bio": "Teste",
+        "password": "123456",
+    }
+    return data
+
+
+@pytest.fixture
 def user(make_user):
-    return make_user()
-
-
-# Compare this snippet from tests/test_user_endpoint.py:
+    return make_user
 
 
 def test_create_user(user_client):
