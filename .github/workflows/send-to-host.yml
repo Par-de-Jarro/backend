@@ -6,7 +6,7 @@ on: workflow_dispatch
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: Send files to host
+    name: Send files to host & Run Docker
 
     steps:
       - uses: actions/checkout@master
@@ -20,10 +20,13 @@ jobs:
           user: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
 
-      - uses: alex-ac/github-action-ssh-docker-compose@master
-        name: Docker-Compose Remote Deployment
+      - name: Deploy to server via SSH
+        uses: appleboy/ssh-action@v0.1.4
         with:
-          ssh_host: ${{ secrets.SERVER_HOST }}
-          ssh_private_key: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
-          ssh_user: ${{ secrets.SERVER_USERNAME }}
-          docker_compose_filename: /home/ubuntu/production_backend/docker-compose.yml
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
+          script: |
+            CI=true docker stop app_server database
+            CI=true docker rm app_server database
+            CI=true docker-compose -f /home/ubuntu/production_backend/docker-compose.yml up
