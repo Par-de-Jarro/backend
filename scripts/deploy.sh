@@ -16,5 +16,5 @@ if [[ "$STR" == *"$SUB2"* ]]; then
         docker rm ${SUB2}
 fi
 
-docker-compose -f /home/ubuntu/production_backend/docker-compose.yml up
+docker-compose -f /home/ubuntu/production_backend/docker-compose.yml up -d
 
