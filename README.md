@@ -51,4 +51,3 @@ https://docs.docker.com/compose/
 ## 2 - Rodar os testes
 
 ```make test-docker```
-

@@ -12,7 +12,7 @@ from sqlalchemy_utils import create_database, database_exists
 from app.api.deps import get_db
 from app.core.settings import SQLALCHEMY_DATABASE_URL
 from app.main import app
-from tests.factories import make_todo  # noqa: F401
+from tests.factories import make_user  # noqa: F401
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 
@@ -76,3 +76,8 @@ def client(session):
 
     yield test_client
     del app.dependency_overrides[get_db]
+
+
+# @pytest.fixture()
+# def user(make_user):
+#    return make_user()
