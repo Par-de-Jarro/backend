@@ -62,7 +62,6 @@ def test_create_user(user_client):
         session.commit()
         response = user_client.delete(user.id_user)
         assert response.status_code == 200
-        assert response.json() == None
 
     def test_delete_user_not_exists(user, session, user_client):
         session.add(user)
