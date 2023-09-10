@@ -39,12 +39,12 @@ def test_create_user(user_client):
     response = user_client.create(json.dumps(make_user))
     assert response.status_code == 200
     assert response.json()["name"] == "Ricardinho"
-    assert response.json()["email"] == data["email"]
-    assert response.json()["cellphone"] == data["cellphone"]
-    assert response.json()["document_id"] == data["document_id"]
-    assert response.json()["birthdate"] == data["birthdate"]
-    assert response.json()["course"] == data["course"]
-    assert response.json()["bio"] == data["bio"]
+    assert response.json()["email"] == "teste@email.com"
+    assert response.json()["cellphone"] == "11999999999"
+    assert response.json()["document_id"] == "12345678901"
+    assert response.json()["birthdate"] == "1990-04-13"
+    assert response.json()["course"] == "Ciência da Computação"
+    assert response.json()["bio"] == "Teste"
 
 
 def test_update_user(user, session, user_client):
