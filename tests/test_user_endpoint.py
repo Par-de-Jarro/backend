@@ -38,7 +38,8 @@ def user(make_user):
 
 
 def test_create_user(user_client):
-    response = user_client.create(json.dumps(make_user))
+    user_data = make_user()
+    response = user_client.create(json.dumps(user_data))
     assert response.status_code == 200
     assert response.json()["name"] == "Ricardinho"
     assert response.json()["email"] == "teste@email.com"
