@@ -16,6 +16,6 @@ jobs:
         with:
           src: ./*
           host: ${{ secrets.SERVER_HOST }}
-          remote: /home/ubuntu/
+          remote: /home/ubuntu/production_backend/
           user: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
