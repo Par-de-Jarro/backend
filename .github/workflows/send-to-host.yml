@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@master
       
-      - name: Publish
+      - name: Copy files to host
         uses: nogsantos/scp-deploy@master
         with:
           src: ./*
@@ -19,3 +19,16 @@ jobs:
           remote: /home/ubuntu/production_backend/
           user: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
+
+      - name: Run deploy
+        uses: appleboy/ssh-action@v0.1.4
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
+          script: |
+            CI=true docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+            CI=true docker stop app_server database
+            CI=true docker rm app_server database
+            CI=true docker-compose -f /home/ubuntu/production_backend/docker-compose.yml up
+        
