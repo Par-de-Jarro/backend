@@ -20,13 +20,8 @@ jobs:
           user: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
 
-      - name: Deploy to server via SSH
-        uses: appleboy/ssh-action@v0.1.4
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USERNAME }}
-          key: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
-          script: |
-            CI=true docker stop app_server database
-            CI=true docker rm app_server database
-            CI=true docker-compose -f /home/ubuntu/production_backend/docker-compose.yml up
+      - name: Deploy
+        run: |
+         TEMP=$(mktemp)
+         echo "${{ secrets.SERVER_SSH_PRIVATE_KEY }}" > $TEMP
+         ssh -o 'StrictHostKeyChecking no' -i $TEMP ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }} 'bash -s' < scripts/deploy.sh
