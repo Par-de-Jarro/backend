@@ -28,6 +28,7 @@ def make_user():
         "course": "Ciência da Computação",
         "bio": "Teste",
         "password": "123456",
+        "password_hash": "123456",
     }
     return data
 
