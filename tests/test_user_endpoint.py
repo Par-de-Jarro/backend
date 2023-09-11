@@ -2,8 +2,6 @@ import json
 
 import pytest
 
-from app.user.models.user import User
-
 from .base_client import BaseClient
 
 
