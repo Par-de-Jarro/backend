@@ -18,8 +18,12 @@ def user_client(client):
 
 
 @pytest.fixture
-def make_user():
-    data = {
+def user(make_user):
+    return make_user()
+
+
+def test_create_user(user_client):
+    user_data = {
         "name": "Ricardinho",
         "email": "teste@email.com",
         "cellphone": "11999999999",
@@ -27,19 +31,7 @@ def make_user():
         "birthdate": "1990-04-13",
         "course": "Ciência da Computação",
         "bio": "Teste",
-        "password": "123456",
-        "password_hash": "123456",
     }
-    return data
-
-
-@pytest.fixture
-def user(make_user):
-    return make_user
-
-
-def test_create_user(user_client):
-    user_data = make_user()
     response = user_client.create(json.dumps(user_data))
     assert response.status_code == 200
     assert response.json()["name"] == "Ricardinho"
@@ -52,16 +44,7 @@ def test_create_user(user_client):
 
 
 def test_update_user(user, session, user_client):
-    user_obj = User(
-        name=user["name"],
-        email=user["email"],
-        cellphone=user["cellphone"],
-        document_id=user["document_id"],
-        birthdate=user["birthdate"],
-        course=user["course"],
-        bio=user["bio"],
-    )
-    session.add(user_obj)
+    session.add(user)
     session.commit()
     data = {
         "name": "Ricardinho",
@@ -79,32 +62,14 @@ def test_update_user(user, session, user_client):
 
 
 def test_delete_user(user, session, user_client):
-    user_obj = User(
-        name=user["name"],
-        email=user["email"],
-        cellphone=user["cellphone"],
-        document_id=user["document_id"],
-        birthdate=user["birthdate"],
-        course=user["course"],
-        bio=user["bio"],
-    )
-    session.add(user_obj)
+    session.add(user)
     session.commit()
     response = user_client.delete(user.id_user)
     assert response.status_code == 200
 
 
 def test_delete_user_not_exists(user, session, user_client):
-    user_obj = User(
-        name=user["name"],
-        email=user["email"],
-        cellphone=user["cellphone"],
-        document_id=user["document_id"],
-        birthdate=user["birthdate"],
-        course=user["course"],
-        bio=user["bio"],
-    )
-    session.add(user_obj)
+    session.add(user)
     session.commit()
     response = user_client.delete("123456789")
     assert response.status_code == 404
@@ -112,16 +77,7 @@ def test_delete_user_not_exists(user, session, user_client):
 
 
 def test_get_user_by_id(user, session, user_client):
-    user_obj = User(
-        name=user["name"],
-        email=user["email"],
-        cellphone=user["cellphone"],
-        document_id=user["document_id"],
-        birthdate=user["birthdate"],
-        course=user["course"],
-        bio=user["bio"],
-    )
-    session.add(user_obj)
+    session.add(user)
     session.commit()
     response = user_client.get(user.id_user)
     assert response.status_code == 200
@@ -135,16 +91,7 @@ def test_get_user_by_id(user, session, user_client):
 
 
 def test_list_users(user, session, user_client):
-    user_obj = User(
-        name=user["name"],
-        email=user["email"],
-        cellphone=user["cellphone"],
-        document_id=user["document_id"],
-        birthdate=user["birthdate"],
-        course=user["course"],
-        bio=user["bio"],
-    )
-    session.add(user_obj)
+    session.add(user)
     session.commit()
     response = user_client.list()
     assert response.status_code == 200

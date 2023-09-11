@@ -1,16 +1,23 @@
+import uuid
+
 import pytest
 
-from app.user.schemas.user import UserCreate
+import app.common.models as models
 
 
 @pytest.fixture
 def make_todo():
-    ...
+    defaults = dict(description="UMA DESCRIÇÃO MAROTA")
+
+    def make_todo(**overrides):
+        return models.Todo(id_todo=uuid.uuid4(), **{**defaults, **overrides})
+
+    return make_todo
 
 
 @pytest.fixture
 def make_user():
-    user = UserCreate(
+    defaults = dict(
         name="Ricardinho",
         email="teste@email.com",
         cellphone="11999999999",
@@ -20,4 +27,6 @@ def make_user():
         bio="Teste",
         password="123456",
     )
-    return user
+
+    def make_user(**overrides):
+        return models.User(**{**defaults, **overrides})
