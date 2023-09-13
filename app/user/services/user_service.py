@@ -58,7 +58,6 @@ class UserService(BaseService[UserCreate, UserUpdate, UserView]):
 
     def save_file(self, id_user: UUID, uploaded_file: UploadFile) -> UserView:
         if not (self.get_by_id(id_user=id_user)):
-            print("NO")
             raise RecordNotFoundException()
         profile_image_url = self.aws_repository.save_file(
             id_obj=id_user, uploaded_file=uploaded_file
