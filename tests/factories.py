@@ -25,6 +25,7 @@ def make_user():
         birthdate="1990-04-13",
         course="Ciência da Computação",
         bio="Teste",
+        password_hash="123456",
     )
 
     def make_user(**overrides):
