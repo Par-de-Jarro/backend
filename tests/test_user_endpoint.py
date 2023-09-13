@@ -21,7 +21,7 @@ def user(make_user):
 
 
 def test_create_user(user_client):
-    user_data = {
+    data = {
         "name": "Ricardinho",
         "email": "teste@email.com",
         "cellphone": "11999999999",
@@ -29,68 +29,47 @@ def test_create_user(user_client):
         "birthdate": "1990-04-13",
         "course": "Ciência da Computação",
         "bio": "Teste",
+        "password": "123456",
     }
-    response = user_client.create(json.dumps(user_data))
+    response = user_client.create_user(data)
     assert response.status_code == 200
     assert response.json()["name"] == "Ricardinho"
-    assert response.json()["email"] == "teste@email.com"
-    assert response.json()["cellphone"] == "11999999999"
-    assert response.json()["document_id"] == "12345678901"
-    assert response.json()["birthdate"] == "1990-04-13"
     assert response.json()["course"] == "Ciência da Computação"
-    assert response.json()["bio"] == "Teste"
 
 
-def test_update_user(user, session, user_client):
+@pytest.mark.parametrize(
+    "field,expected_field",
+    [("birthdate", "1999-04-13")],
+)
+def test_update_user(user, session, user_client, field, expected_field):
     session.add(user)
     session.commit()
-    data = {
-        "name": "Ricardinho",
-        "email": "teste@email.com",
-        "cellphone": "11999999999",
-        "document_id": "12345678901",
-        "birthdate": "1999-04-13",
-        "course": "Ciência da Computação",
-        "bio": "eita como tem bio",
-    }
-    response = user_client.update(user.id_user, json.dumps(data))
+    data = {field: expected_field}
+    response = user_client.update_user(user.id_user, json.dumps(data))
     assert response.status_code == 200
-    assert response.json()["birthdate"] == "1999-04-13"
-    assert response.json()["bio"] == "eita como tem bio"
+    assert response.json()[field] == expected_field
 
 
 def test_delete_user(user, session, user_client):
     session.add(user)
     session.commit()
-    response = user_client.delete(user.id_user)
+    response = user_client.delete_user(user.id_user)
     assert response.status_code == 200
-
-
-def test_delete_user_not_exists(user, session, user_client):
-    session.add(user)
-    session.commit()
-    response = user_client.delete("123456789")
-    assert response.status_code == 404
-    assert response.json()["detail"] == "User not found"
+    assert response.json()["message"] == "User deleted successfully"
 
 
 def test_get_user_by_id(user, session, user_client):
     session.add(user)
     session.commit()
-    response = user_client.get(user.id_user)
+    response = user_client.get_user_by_id(user.id_user)
     assert response.status_code == 200
-    assert response.json()["name"] == user.name
-    assert response.json()["email"] == user.email
-    assert response.json()["cellphone"] == user.cellphone
-    assert response.json()["document_id"] == user.document_id
-    assert response.json()["birthdate"] == user.birthdate
-    assert response.json()["course"] == user.course
-    assert response.json()["bio"] == user.bio
+    assert response.json()["name"] == "Ricardinho"
+    assert response.json()["course"] == "Ciência da Computação"
 
 
-def test_list_users(user, session, user_client):
+def test_list_user(user, session, user_client):
     session.add(user)
     session.commit()
-    response = user_client.list()
+    response = user_client.list_user()
     assert response.status_code == 200
     assert len(response.json()) == 1

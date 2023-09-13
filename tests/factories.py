@@ -29,4 +29,6 @@ def make_user():
     )
 
     def make_user(**overrides):
-        return models.User(**{**defaults, **overrides})
+        return models.User(id_user=uuid.uuid4(), **{**defaults, **overrides})
+
+    return make_user
