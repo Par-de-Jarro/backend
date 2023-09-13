@@ -56,8 +56,14 @@ def get_all(
     response_model=UserView,
     dependencies=[Depends(deps.hass_access)],
 )
-def get_by_id(id_user: UUID, service: UserService = Depends(deps.get_user_service)):
-    return service.get_by_id(id_user=id_user)
+def get_users_by_id(
+    id_user: UUID,
+    service: UserService = Depends(deps.get_user_service),
+):
+    try:
+        return service.get_by_id(id_user=id_user)
+    except RecordNotFoundException:
+        raise RecordNotFoundHTTPException(detail="User not found")
 
 
 @router.put(
@@ -83,5 +89,5 @@ def delete_user(
 ):
     try:
         service.delete(id_user=id_user)
-    except Exception as e:
-        raise e
+    except RecordNotFoundException:
+        raise RecordNotFoundHTTPException(detail="User not found")

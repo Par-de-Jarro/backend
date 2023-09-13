@@ -29,8 +29,9 @@ def test_create_user(user_client):
         "birthdate": "1990-04-13",
         "course": "Ciência da Computação",
         "bio": "Teste",
-        "password_hash": "123456",
+        "password": "123456",
     }
+
     response = user_client.create(json.dumps(data))
     assert response.status_code == 200
     assert response.json()["name"] == "Ricardinho"
@@ -39,29 +40,33 @@ def test_create_user(user_client):
 
 @pytest.mark.parametrize(
     "field,expected_field",
-    [("birthdate", "1999-04-13")],
+    [("name", "Novo nome"), ("cellphone", "11888888888"), ("document_id", "12312312312")],
 )
 def test_update_user(user, session, user_client, field, expected_field):
     session.add(user)
     session.commit()
+
     data = {field: expected_field}
-    response = user_client.update(user.id_user, json.dumps(data))
+
+    response = user_client.update(id=user.id_user, update=json.dumps(data))
     assert response.status_code == 200
     assert response.json()[field] == expected_field
 
 
-# def test_delete_user(user, session, user_client):
-#    session.add(user)
-#    session.commit()
-#    response = user_client.delete(user.id_user)
-#    assert response.status_code == 200
-#    assert response.json()["message"] == "User deleted successfully"
+def test_delete_user(user, session, user_client):
+    session.add(user)
+    session.commit()
+
+    user_client.delete(id=user.id_user)
+    response = user_client.get_by_id(id=user.id_user)
+    assert response.status_code == 404
+    assert response.json()["detail"] == "User not found"
 
 
 def test_get_user_by_id(user, session, user_client):
     session.add(user)
     session.commit()
-    response = user_client.get_all(document_id=user.id_user)
+    response = user_client.get_by_id(id=user.id_user)
     assert response.status_code == 200
     assert response.json()["name"] == "Ricardinho"
     assert response.json()["course"] == "Ciência da Computação"
