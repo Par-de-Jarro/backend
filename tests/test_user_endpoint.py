@@ -29,7 +29,6 @@ def test_create_user(user_client):
         "birthdate": "1990-04-13",
         "course": "Ciência da Computação",
         "bio": "Teste",
-        "password": "123456",
     }
     response = user_client.create(json.dumps(data))
     assert response.status_code == 200
