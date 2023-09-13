@@ -31,7 +31,7 @@ def test_create_user(user_client):
         "bio": "Teste",
         "password": "123456",
     }
-    response = user_client.create_user(data)
+    response = user_client.create(json.dumps(data))
     assert response.status_code == 200
     assert response.json()["name"] == "Ricardinho"
     assert response.json()["course"] == "Ciência da Computação"
