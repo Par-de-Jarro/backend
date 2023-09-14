@@ -1,13 +1,13 @@
 from sqlalchemy.orm import Session
 
-import app.common.models as models
 from app.common.repositories.base import BaseRepository
+from app.spot.models.spot import Spot
 
 
 class SpotRepository(BaseRepository):
     def __init__(self, db: Session):
         super(SpotRepository, self).__init__(
-            models.Spot.id_spot,
-            model_class=models.Spot,
+            Spot.id_spot,
+            model_class=Spot,
             db=db,
         )
