@@ -22,7 +22,6 @@ class SpotConvenience(BaseModel):
 class SpotAllowence(BaseModel):
     allow_pet: Optional[bool]
     allow_smoker: Optional[bool]
-    has_elevator: Optional[bool]
 
 
 class SpotKey(BaseModel):

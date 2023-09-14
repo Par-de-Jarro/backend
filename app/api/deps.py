@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from app.auth.services.auth import AuthService
 from app.common.exceptions import AuthExceptionHTTPException
 from app.db.database import SessionLocal
+from app.spot.services.spot_service import SpotService
 from app.user.services.user_service import UserService
 
 
@@ -24,6 +25,10 @@ def get_db():
 
 def get_user_service(db: Session = Depends(get_db)):
     return UserService(db)
+
+
+def get_spot_service(db: Session = Depends(get_db)):
+    return SpotService(db)
 
 
 def get_auth_service(user_service: UserService = Depends(get_user_service)):
