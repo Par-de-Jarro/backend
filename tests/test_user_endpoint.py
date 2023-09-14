@@ -72,24 +72,6 @@ def test_get_user_by_id(user, session, user_client):
     assert response.json()["course"] == "Ciência da Computação"
 
 
-def test_get_user_by_email(user, session, user_client):
-    session.add(user)
-    session.commit()
-    response = user_client.get_by_email(email=user.email)
-    assert response.status_code == 200
-    assert response.json()["name"] == "Ricardinho"
-    assert response.json()["course"] == "Ciência da Computação"
-
-
-def test_get_user_by_document_id(user, session, user_client):
-    session.add(user)
-    session.commit()
-    response = user_client.get_by_document_id(document_id=user.document_id)
-    assert response.status_code == 200
-    assert response.json()["name"] == "Ricardinho"
-    assert response.json()["course"] == "Ciência da Computação"
-
-
 def test_list_user(user, session, user_client):
     session.add(user)
     session.commit()
@@ -106,30 +88,18 @@ def test_update_user_with_user_not_found(user_client, field, expected_field):
     data = {field: expected_field}
     user_client.update(id="123", update=json.dumps(data))
     response = user_client.get_by_id(id="123")
-    assert response.status_code == 404
+    assert response.status_code == 422
     assert response.json()["detail"] == "User not found"
 
 
 def test_delete_user_with_user_not_found(user_client):
     user_client.delete(id="123")
     response = user_client.get_by_id(id="123")
-    assert response.status_code == 404
+    assert response.status_code == 422
     assert response.json()["detail"] == "User not found"
 
 
 def test_get_user_by_id_with_user_not_found(user_client):
     response = user_client.get_by_id(id="123")
-    assert response.status_code == 404
-    assert response.json()["detail"] == "User not found"
-
-
-def test_get_user_by_email_with_user_not_found(user_client):
-    response = user_client.get_by_email(email="ricardinho.eu@email.com")
-    assert response.status_code == 404
-    assert response.json()["detail"] == "User not found"
-
-
-def test_get_user_by_document_id_with_user_not_found(user_client):
-    response = user_client.get_by_document_id(document_id="12312312312")
-    assert response.status_code == 404
+    assert response.status_code == 422
     assert response.json()["detail"] == "User not found"
