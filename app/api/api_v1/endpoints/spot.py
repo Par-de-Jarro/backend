@@ -78,10 +78,7 @@ def delete_spot(id_spot: UUID, service: SpotService = Depends(deps.get_spot_serv
         raise RecordNotFoundHTTPException(detail="Spot not found")
 
 
-@router.post(
-    "/{id_spot}/upload",
-    dependencies=[Depends(deps.hass_access)],
-)
+@router.post("/{id_spot}/upload", dependencies=[Depends(deps.hass_access)], response_model=SpotView)
 def upload_announcement_images(
     id_spot: UUID,
     files: List[UploadFile] = File(...),
