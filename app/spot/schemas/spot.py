@@ -6,6 +6,7 @@ from uuid import UUID
 from pydantic import BaseModel
 
 from app.common.schemas import omit
+from app.user.schemas.user import UserView
 
 
 class Images(BaseModel):
@@ -54,6 +55,7 @@ class Spot(BaseModel):
 
 class SpotView(Spot):
     id_spot: UUID
+    owner: UserView
 
     class Config:
         orm_mode = True
@@ -61,7 +63,7 @@ class SpotView(Spot):
 
 @omit("images")
 class SpotCreate(Spot):
-    ...
+    id_user: UUID
 
 
 class SpotUpdate(BaseModel):

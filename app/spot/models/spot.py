@@ -25,11 +25,11 @@ class Spot(Base, TableModel):
             "user.id_user",
             name="spot_user_id_user",
         ),
-        nullable=True,
+        nullable=False,
         index=True,
     )
 
-    user = relationship(
+    owner = relationship(
         "User",
         foreign_keys=id_user,
     )
