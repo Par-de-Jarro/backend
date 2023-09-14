@@ -1,12 +1,17 @@
 from decimal import Decimal
+from typing import List
+from uuid import UUID
 
+from fastapi import UploadFile
 from sqlalchemy.orm import Session
 
+from app.common.exceptions import RecordNotFoundException
+from app.common.repositories.aws_repository import AWSRepository
 from app.common.repositories.base import haversine
 from app.common.services.base import BaseService
 from app.spot.models.spot import Spot
 from app.spot.repositories.spot_repository import SpotFinder, SpotRepository
-from app.spot.schemas.spot import SpotCreate, SpotSearchParams, SpotUpdate, SpotView
+from app.spot.schemas.spot import Images, SpotCreate, SpotSearchParams, SpotUpdate, SpotView
 from app.user.models.user import User
 from app.user.schemas.user import UserView
 
@@ -17,6 +22,7 @@ class SpotService(BaseService[SpotCreate, SpotUpdate, SpotView]):
 
     def __init__(self, db: Session):
         super().__init__(repository=SpotRepository, db=db)
+        self.aws_repository = AWSRepository(base_path="spot")
         self.db = db
 
     def search(self, filters: SpotSearchParams):
@@ -38,6 +44,20 @@ class SpotService(BaseService[SpotCreate, SpotUpdate, SpotView]):
         )
 
         return [self._parse_result(item) for item in result.all()]
+
+    def save_multiple_files(self, id_spot: UUID, uploaded_files: List[UploadFile]) -> List[str]:
+        spot = self.get_by_id(id_spot=id_spot)
+        if not (spot):
+            raise RecordNotFoundException()
+
+        images = self.aws_repository.save_multiple_files(
+            id_obj=id_spot, uploaded_files=uploaded_files
+        )
+
+        images = [Images(image_order=index, image_url=image) for index, image in enumerate(images)]
+        spot_update = SpotUpdate(images=images)
+
+        return self.update(id_spot=id_spot, update=spot_update)
 
     def _parse_result(self, result) -> SpotView:
         return SpotView(**result, owner=UserView(**result["User"].__dict__))

@@ -1,10 +1,15 @@
 from typing import List
 from uuid import UUID
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, File, UploadFile
 
 from app.api import deps
-from app.common.exceptions import RecordNotFoundException, RecordNotFoundHTTPException
+from app.common.exceptions import (
+    AWSConfigException,
+    AWSConfigExceptionHTTPException,
+    RecordNotFoundException,
+    RecordNotFoundHTTPException,
+)
 from app.spot.schemas.spot import SpotCreate, SpotSearchParams, SpotUpdate, SpotView
 from app.spot.services.spot_service import SpotService
 
@@ -25,10 +30,9 @@ def create_spot(spot: SpotCreate, service: SpotService = Depends(deps.get_spot_s
     response_model=List[SpotView],
 )
 def get_all(
-    filters: SpotSearchParams = Depends(SpotSearchParams.params()),
     service: SpotService = Depends(deps.get_spot_service),
 ):
-    return service.get_all(filters=filters)
+    return service.get_all()
 
 
 @router.get(
@@ -45,7 +49,6 @@ def searh(
 @router.get(
     "/{id_spot}",
     response_model=SpotView,
-    dependencies=[Depends(deps.hass_access)],
 )
 def get_by_id(id_spot: UUID, service: SpotService = Depends(deps.get_spot_service)):
     try:
@@ -54,7 +57,7 @@ def get_by_id(id_spot: UUID, service: SpotService = Depends(deps.get_spot_servic
         raise RecordNotFoundHTTPException(detail="Spot not found")
 
 
-@router.put("/{id_spot}", response_model=SpotView)
+@router.put("/{id_spot}", dependencies=[Depends(deps.hass_access)], response_model=SpotView)
 def update_spot(
     id_spot: UUID, update: SpotUpdate, service: SpotService = Depends(deps.get_spot_service)
 ):
@@ -73,3 +76,20 @@ def delete_spot(id_spot: UUID, service: SpotService = Depends(deps.get_spot_serv
         service.delete(id_spot=id_spot)
     except RecordNotFoundException:
         raise RecordNotFoundHTTPException(detail="Spot not found")
+
+
+@router.post(
+    "/{id_spot}/upload",
+    dependencies=[Depends(deps.hass_access)],
+)
+def upload_announcement_images(
+    id_spot: UUID,
+    files: List[UploadFile] = File(...),
+    service: SpotService = Depends(deps.get_spot_service),
+):
+    try:
+        return service.save_multiple_files(id_spot=id_spot, uploaded_files=files)
+    except RecordNotFoundException:
+        raise RecordNotFoundHTTPException(detail="Spot not found")
+    except AWSConfigException as e:
+        raise AWSConfigExceptionHTTPException(detail=e.detail)

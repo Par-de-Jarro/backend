@@ -83,6 +83,7 @@ class SpotUpdate(BaseModel):
     state: Optional[str]
     observations: Optional[str]
     key: Optional[SpotKey]
+    images: Optional[List[Images]]
 
 
 class SpotSearchParams(BaseModel, QueryParam):
