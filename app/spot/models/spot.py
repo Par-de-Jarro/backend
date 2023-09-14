@@ -1,11 +1,13 @@
-from sqlalchemy import Column, String, text
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import Column, Enum, ForeignKey, Integer, Numeric, String, text
+from sqlalchemy.dialects.postgresql import ARRAY, JSONB, UUID
+from sqlalchemy.orm import relationship
 
 from app.common.models.table_model import TableModel
 from app.db.database import Base
+from app.spot.schemas.spot import SpotType
 
 
-class User(Base, TableModel):
+class Spot(Base, TableModel):
     __tablename__ = "spot"
 
     id_spot = Column(
@@ -18,34 +20,46 @@ class User(Base, TableModel):
         nullable=False,
     )
 
-    id_user = ...
+    id_user = Column(
+        ForeignKey(
+            "user.id_user",
+            name="spot_user_id_user",
+        ),
+        nullable=True,
+        index=True,
+    )
 
-    user = ...
+    user = relationship(
+        "User",
+        foreign_keys=id_user,
+    )
 
     name = Column(String(50), nullable=False)
 
     description = Column(String(500), nullable=False)
 
-    personal_quota = ...
+    personal_quota = Column(Integer, nullable=False)
 
-    images = ...
+    images = Column(ARRAY(JSONB), nullable=True)
 
-    value = ...
+    type = Column(Enum(SpotType), nullable=False)
 
-    lat = ...
+    value = Column(Numeric, nullable=False)
 
-    long = ...
+    lat = Column(Numeric, nullable=False)
 
-    street = ...
+    long = Column(Numeric, nullable=False)
 
-    number = ...
+    street = Column(String(500), nullable=False)
 
-    complement = ...
+    number = Column(String(500), nullable=False)
 
-    city = ...
+    complement = Column(String(500), nullable=False)
 
-    state = ...
+    city = Column(String(500), nullable=False)
 
-    observations = ...
+    state = Column(String(2), nullable=False)
 
-    key = ...
+    observations = Column(String(500), nullable=False)
+
+    key = Column(JSONB, nullable=False, server_default=text("'{}'"))
