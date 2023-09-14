@@ -21,14 +21,14 @@ class SpotConvenience(BaseModel):
     has_elevator: Optional[bool]
 
 
-class SpotAllowence(BaseModel):
+class SpotAllowance(BaseModel):
     allow_pet: Optional[bool]
     allow_smoker: Optional[bool]
 
 
 class SpotKey(BaseModel):
     convenience: SpotConvenience
-    allowence: SpotAllowence
+    allowance: SpotAllowance
 
 
 class SpotType(Enum):
@@ -91,7 +91,11 @@ class SpotSearchParams(BaseModel, QueryParam):
     type: Optional[SpotType]
     allow_pet: Optional[bool]
     allow_smoker: Optional[bool]
-    rooms_quantity: Optional[int]
-    bathrooms_quantity: Optional[int]
+    rooms_quantity_max: Optional[int]
+    rooms_quantity_min: Optional[int]
+    bathrooms_quantity_max: Optional[int]
+    bathrooms_quantity_min: Optional[int]
     has_elevator: Optional[bool]
-    value: Optional[Decimal]
+    value_max: Optional[Decimal]
+    value_min: Optional[Decimal]
+    distance_range: Optional[Decimal]

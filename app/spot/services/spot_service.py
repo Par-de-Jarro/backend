@@ -20,9 +20,24 @@ class SpotService(BaseService[SpotCreate, SpotUpdate, SpotView]):
         self.db = db
 
     def search(self, filters: SpotSearchParams):
-        finder = SpotFinder(self._get_base_query(lat=filters.lat, long=filters.long))
+        finder = SpotFinder(base_query=self._get_base_query(lat=filters.lat, long=filters.long))
 
-        return [self._parse_result(item) for item in finder.all()]
+        result = (
+            finder.filter_by_bathrooms_quantity_min(filters.bathrooms_quantity_min)
+            .filter_by_bathrooms_quantity_max(filters.bathrooms_quantity_max)
+            .filter_by_rooms_quantity_min(filters.rooms_quantity_min)
+            .filter_by_rooms_quantity_max(filters.rooms_quantity_max)
+            .filter_by_distance_range(
+                distance_range=filters.distance_range, lat=filters.lat, long=filters.long
+            )
+            .filter_by_value_min(filters.value_min)
+            .filter_by_value_max(filters.value_max)
+            .filter_by_allow_smoker(filters.allow_smoker)
+            .filter_by_allow_pet(filters.allow_pet)
+            .filter_by_has_elevator(filters.has_elevator)
+        )
+
+        return [self._parse_result(item) for item in result.all()]
 
     def _parse_result(self, result) -> SpotView:
         return SpotView(**result, owner=UserView(**result["User"].__dict__))
@@ -31,6 +46,8 @@ class SpotService(BaseService[SpotCreate, SpotUpdate, SpotView]):
         return (
             self.db.query(
                 Spot.__table__,
+            )
+            .add_column(
                 haversine(Spot.lat, Spot.long, lat, long).label("distance"),
             )
             .add_entity(User)
