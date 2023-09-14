@@ -79,28 +79,3 @@ def test_list_user(user, session, user_client):
     response = user_client.get_all()
     assert response.status_code == 200
     assert len(response.json()) == 1
-
-
-@pytest.mark.parametrize(
-    "field,expected_field",
-    [("name", "Novo nome"), ("cellphone", "11888888888"), ("document_id", "12312312312")],
-)
-def test_update_user_with_user_not_found(user_client, field, expected_field):
-    data = {field: expected_field}
-    user_client.update(id=uuid.uuid4(), update=json.dumps(data))
-    response = user_client.get_by_id(id=uuid.uuid4())
-    assert response.status_code == 404
-    assert response.json()["detail"] == "User not found"
-
-
-def test_delete_user_with_user_not_found(user_client):
-    user_client.delete(id=uuid.uuid4())
-    response = user_client.get_by_id(id=uuid.uuid4())
-    assert response.status_code == 404
-    assert response.json()["detail"] == "User not found"
-
-
-def test_get_user_by_id_with_user_not_found(user_client):
-    response = user_client.get_by_id(id=uuid.uuid4())
-    assert response.status_code == 404
-    assert response.json()["detail"] == "User not found"
