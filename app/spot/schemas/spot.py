@@ -1,7 +1,11 @@
 from decimal import Decimal
+from enum import Enum
 from typing import List, Optional
+from uuid import UUID
 
 from pydantic import BaseModel
+
+from app.common.schemas import omit
 
 
 class Images(BaseModel):
@@ -9,10 +13,26 @@ class Images(BaseModel):
     image_order: int
 
 
+class SpotConvenience(BaseModel):
+    rooms_quantity: Optional[int]
+    bathrooms_quantity: Optional[int]
+    has_elevator: Optional[bool]
+
+
+class SpotAllowence(BaseModel):
+    allow_pet: Optional[bool]
+    allow_smoker: Optional[bool]
+    has_elevator: Optional[bool]
+
+
 class SpotKey(BaseModel):
-    convenience: ...
-    # quantos quartos,
-    # quantos banheiros,
+    convenience: SpotConvenience
+    allowence: SpotAllowence
+
+
+class SpotType(Enum):
+    HOUSE = "house"
+    APARTMENT = "apartment"
 
 
 class Spot(BaseModel):
@@ -20,6 +40,7 @@ class Spot(BaseModel):
     description: str
     personal_quota: int
     images: Optional[List[Images]]
+    type: SpotType
     value: Decimal
     lat: Decimal
     long: Decimal
@@ -29,11 +50,33 @@ class Spot(BaseModel):
     city: str
     state: str
     observations: str
-    key = ...
+    key: SpotKey
 
 
-# se é apartamento ou casa,
-# se for apartamento: se tem elevador e em qual andar fica
-# se permite fumantes
-# se permite pets
-# se permite pets
+class SpotView(Spot):
+    id_spot: UUID
+
+    class Config:
+        orm_mode = True
+
+
+@omit("images")
+class SpotCreate(Spot):
+    ...
+
+
+class SpotUpdate(BaseModel):
+    name: Optional[str]
+    description: Optional[str]
+    personal_quota: Optional[int]
+    type: Optional[SpotType]
+    value: Optional[Decimal]
+    lat: Optional[Decimal]
+    long: Optional[Decimal]
+    street: Optional[str]
+    number: Optional[str]
+    complement: Optional[str]
+    city: Optional[str]
+    state: Optional[str]
+    observations: Optional[str]
+    key: Optional[SpotKey]
