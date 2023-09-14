@@ -3,6 +3,7 @@ from enum import Enum
 from typing import List, Optional
 from uuid import UUID
 
+from fastapi_qp import QueryParam
 from pydantic import BaseModel
 
 from app.common.schemas import omit
@@ -56,6 +57,7 @@ class Spot(BaseModel):
 class SpotView(Spot):
     id_spot: UUID
     owner: UserView
+    distance: Optional[Decimal]
 
     class Config:
         orm_mode = True
@@ -81,3 +83,15 @@ class SpotUpdate(BaseModel):
     state: Optional[str]
     observations: Optional[str]
     key: Optional[SpotKey]
+
+
+class SpotSearchParams(BaseModel, QueryParam):
+    lat: Optional[Decimal]
+    long: Optional[Decimal]
+    type: Optional[SpotType]
+    allow_pet: Optional[bool]
+    allow_smoker: Optional[bool]
+    rooms_quantity: Optional[int]
+    bathrooms_quantity: Optional[int]
+    has_elevator: Optional[bool]
+    value: Optional[Decimal]

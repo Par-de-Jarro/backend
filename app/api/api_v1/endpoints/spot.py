@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends
 
 from app.api import deps
 from app.common.exceptions import RecordNotFoundException, RecordNotFoundHTTPException
-from app.spot.schemas.spot import SpotCreate, SpotUpdate, SpotView
+from app.spot.schemas.spot import SpotCreate, SpotSearchParams, SpotUpdate, SpotView
 from app.spot.services.spot_service import SpotService
 
 router = APIRouter()
@@ -25,9 +25,21 @@ def create_spot(spot: SpotCreate, service: SpotService = Depends(deps.get_spot_s
     response_model=List[SpotView],
 )
 def get_all(
+    filters: SpotSearchParams = Depends(SpotSearchParams.params()),
     service: SpotService = Depends(deps.get_spot_service),
 ):
-    return service.get_all()
+    return service.get_all(filters=filters)
+
+
+@router.get(
+    "/search",
+    response_model=List[SpotView],
+)
+def searh(
+    filters: SpotSearchParams = Depends(SpotSearchParams.params()),
+    service: SpotService = Depends(deps.get_spot_service),
+):
+    return service.search(filters)
 
 
 @router.get(

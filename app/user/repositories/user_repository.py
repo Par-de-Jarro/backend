@@ -10,7 +10,7 @@ from app.user.models.user import User
 class UserFinder(BaseFinder[User]):
     @classmethod
     def get_instance(cls, db: Session):
-        return cls((db.query(UserFinder).filter(User.deleted_at.is_(None))))
+        return cls((db.query(User).filter(User.deleted_at.is_(None))))
 
     def filter_by_email(self, email: Optional[str]):
         if email:
