@@ -6,6 +6,7 @@ from fastapi import UploadFile
 from sqlalchemy.orm import Session
 
 from app.common.exceptions import RecordNotFoundException
+from app.common.lib.google_address_api import GoogleAddressApi
 from app.common.repositories.aws_repository import AWSRepository
 from app.common.repositories.base import haversine
 from app.common.services.base import BaseService
@@ -19,11 +20,24 @@ from app.user.schemas.user import UserView
 class SpotService(BaseService[SpotCreate, SpotUpdate, SpotView]):
     repository: SpotRepository
     db: Session
+    google_address_api: GoogleAddressApi
 
     def __init__(self, db: Session):
         super().__init__(repository=SpotRepository, db=db)
         self.aws_repository = AWSRepository(base_path="spot")
+        self.google_address_api = GoogleAddressApi()
         self.db = db
+
+    def create(self, create: SpotCreate) -> SpotView:
+        if SpotCreate.lat and SpotCreate.long:
+            return super().create(create)
+        else:
+            lat, long = self.google_address_api.get_location_coordinates(
+                create.street, create.city, create.zip_code
+            )
+
+            spot_create = SpotCreate(**create.dict(), lat=lat, long=long)
+            return super().create(spot_create)
 
     def search(self, filters: SpotSearchParams):
         finder = SpotFinder(base_query=self._get_base_query(lat=filters.lat, long=filters.long))

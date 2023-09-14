@@ -46,6 +46,7 @@ class Spot(BaseModel):
     lat: Decimal
     long: Decimal
     street: str
+    zip_code: str
     number: str
     complement: str
     city: str
@@ -74,13 +75,6 @@ class SpotUpdate(BaseModel):
     personal_quota: Optional[int]
     type: Optional[SpotType]
     value: Optional[Decimal]
-    lat: Optional[Decimal]
-    long: Optional[Decimal]
-    street: Optional[str]
-    number: Optional[str]
-    complement: Optional[str]
-    city: Optional[str]
-    state: Optional[str]
     observations: Optional[str]
     key: Optional[SpotKey]
     images: Optional[List[Images]]

@@ -58,6 +58,8 @@ class Spot(Base, TableModel):
 
     city = Column(String(500), nullable=False)
 
+    zip_code = Column(String(50), nullable=True)
+
     state = Column(String(2), nullable=False)
 
     observations = Column(String(500), nullable=False)
