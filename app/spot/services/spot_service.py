@@ -29,14 +29,14 @@ class SpotService(BaseService[SpotCreate, SpotUpdate, SpotView]):
         self.db = db
 
     def create(self, create: SpotCreate) -> SpotView:
-        if SpotCreate.lat and SpotCreate.long:
+        if create.lat and create.long:
             return super().create(create)
         else:
             lat, long = self.google_address_api.get_location_coordinates(
                 create.street, create.city, create.zip_code
             )
 
-            spot_create = SpotCreate(**create.dict(), lat=lat, long=long)
+            spot_create = SpotCreate(**create.dict(exclude={"lat", "long"}), lat=lat, long=long)
             return super().create(spot_create)
 
     def search(self, filters: SpotSearchParams):

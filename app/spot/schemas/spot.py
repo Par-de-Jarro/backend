@@ -95,4 +95,4 @@ class SpotSearchParams(BaseModel, QueryParam):
     has_elevator: Optional[bool]
     value_max: Optional[Decimal]
     value_min: Optional[Decimal]
-    distance_range: Optional[Decimal] = Field(default=0)
+    distance_range: Optional[Decimal] = Field(default=10)
