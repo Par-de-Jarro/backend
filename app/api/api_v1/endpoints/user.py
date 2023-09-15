@@ -60,7 +60,11 @@ def get_by_id(id_user: UUID, service: UserService = Depends(deps.get_user_servic
     return service.get_by_id(id_user=id_user)
 
 
-@router.put("/", response_model=UserView)
+@router.put(
+    "/",
+    response_model=UserView,
+    dependencies=[Depends(deps.hass_access)],
+)
 def update_user(
     update: UserUpdate,
     id_user: UUID = Depends(deps.get_id_user_by_auth_token),
