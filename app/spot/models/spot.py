@@ -36,7 +36,7 @@ class Spot(Base, TableModel):
 
     name = Column(String(50), nullable=False)
 
-    description = Column(String(500), nullable=False)
+    description = Column(String(500), nullable=True)
 
     personal_quota = Column(Integer, nullable=False)
 
@@ -54,14 +54,12 @@ class Spot(Base, TableModel):
 
     number = Column(String(500), nullable=False)
 
-    complement = Column(String(500), nullable=False)
+    complement = Column(String(500), nullable=True)
 
     city = Column(String(500), nullable=False)
 
     zip_code = Column(String(50), nullable=True)
 
     state = Column(String(2), nullable=False)
-
-    observations = Column(String(500), nullable=False)
 
     key = Column(JSONB, nullable=False, server_default=text("'{}'"))

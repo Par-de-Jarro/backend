@@ -38,7 +38,7 @@ class SpotType(Enum):
 
 class Spot(BaseModel):
     name: str
-    description: str
+    description: Optional[str]
     personal_quota: int
     images: Optional[List[Images]]
     type: SpotType
@@ -48,10 +48,9 @@ class Spot(BaseModel):
     street: str
     zip_code: str
     number: str
-    complement: str
+    complement: Optional[str]
     city: str
     state: str
-    observations: str
     key: SpotKey
 
 
@@ -77,7 +76,6 @@ class SpotUpdate(BaseModel):
     personal_quota: Optional[int]
     type: Optional[SpotType]
     value: Optional[Decimal]
-    observations: Optional[str]
     key: Optional[SpotKey]
     images: Optional[List[Images]]
 
