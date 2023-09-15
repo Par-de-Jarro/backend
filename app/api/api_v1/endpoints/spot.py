@@ -21,8 +21,13 @@ router = APIRouter()
     response_model=SpotView,
     dependencies=[Depends(deps.hass_access)],
 )
-def create_spot(spot: SpotCreate, service: SpotService = Depends(deps.get_spot_service)):
-    return service.create(spot)
+def create_spot(
+    spot: SpotCreate,
+    id_user: UUID = Depends(deps.get_id_user_by_auth_token),
+    service: SpotService = Depends(deps.get_spot_service),
+):
+    create = SpotCreate(**spot.dict(exclude={"id_user"}), id_user=id_user)
+    return service.create(create=create)
 
 
 @router.get(
@@ -59,10 +64,13 @@ def get_by_id(id_spot: UUID, service: SpotService = Depends(deps.get_spot_servic
 
 @router.put("/{id_spot}", dependencies=[Depends(deps.hass_access)], response_model=SpotView)
 def update_spot(
-    id_spot: UUID, update: SpotUpdate, service: SpotService = Depends(deps.get_spot_service)
+    id_spot: UUID,
+    update: SpotUpdate,
+    id_user: UUID = Depends(deps.get_id_user_by_auth_token),
+    service: SpotService = Depends(deps.get_spot_service),
 ):
     try:
-        return service.update(id_spot=id_spot, update=update)
+        return service.update(id_spot=id_spot, update=update, id_user=id_user)
     except RecordNotFoundException:
         raise RecordNotFoundHTTPException(detail="User not found")
 
@@ -71,9 +79,13 @@ def update_spot(
     "/{id_spot}",
     dependencies=[Depends(deps.hass_access)],
 )
-def delete_spot(id_spot: UUID, service: SpotService = Depends(deps.get_spot_service)):
+def delete_spot(
+    id_spot: UUID,
+    service: SpotService = Depends(deps.get_spot_service),
+    id_user: UUID = Depends(deps.get_id_user_by_auth_token),
+):
     try:
-        service.delete(id_spot=id_spot)
+        service.delete(id_spot=id_spot, id_user=id_user)
     except RecordNotFoundException:
         raise RecordNotFoundHTTPException(detail="Spot not found")
 
@@ -82,10 +94,11 @@ def delete_spot(id_spot: UUID, service: SpotService = Depends(deps.get_spot_serv
 def upload_announcement_images(
     id_spot: UUID,
     files: List[UploadFile] = File(...),
+    id_user: UUID = Depends(deps.get_id_user_by_auth_token),
     service: SpotService = Depends(deps.get_spot_service),
 ):
     try:
-        return service.save_multiple_files(id_spot=id_spot, uploaded_files=files)
+        return service.save_multiple_files(id_spot=id_spot, id_user=id_user, uploaded_files=files)
     except RecordNotFoundException:
         raise RecordNotFoundHTTPException(detail="Spot not found")
     except AWSConfigException as e:

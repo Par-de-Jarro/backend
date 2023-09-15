@@ -5,7 +5,7 @@ from uuid import UUID
 from fastapi import UploadFile
 from sqlalchemy.orm import Session
 
-from app.common.exceptions import RecordNotFoundException
+from app.common.exceptions import AuthExceptionHTTPException, RecordNotFoundException
 from app.common.lib.google_address_api import GoogleAddressApi
 from app.common.repositories.aws_repository import AWSRepository
 from app.common.repositories.base import haversine
@@ -39,6 +39,22 @@ class SpotService(BaseService[SpotCreate, SpotUpdate, SpotView]):
             spot_create = SpotCreate(**create.dict(exclude={"lat", "long"}), lat=lat, long=long)
             return super().create(spot_create)
 
+    def update(self, id_user: UUID, id_spot: UUID, update: SpotUpdate) -> SpotView:
+        self._check_if_allowed(id_user=id_user, id_spot=id_spot)
+
+        return super().update(update=update, id_spot=id_spot)
+
+    def delete(self, id_user: UUID, id_spot: UUID) -> bool:
+        self._check_if_allowed(id_user=id_user, id_spot=id_spot)
+
+        return super().delete(id_spot=id_spot)
+
+    def _check_if_allowed(self, id_user: UUID, id_spot: UUID):
+        spot = self.get_by_id(id_spot=id_spot)
+
+        if spot.owner.id_user != id_user:
+            raise AuthExceptionHTTPException(detail="User not allowed")
+
     def search(self, filters: SpotSearchParams):
         finder = SpotFinder(base_query=self._get_base_query(lat=filters.lat, long=filters.long))
 
@@ -59,7 +75,11 @@ class SpotService(BaseService[SpotCreate, SpotUpdate, SpotView]):
 
         return [self._parse_result(item) for item in result.all()]
 
-    def save_multiple_files(self, id_spot: UUID, uploaded_files: List[UploadFile]) -> List[str]:
+    def save_multiple_files(
+        self, id_spot: UUID, id_user: UUID, uploaded_files: List[UploadFile]
+    ) -> List[str]:
+        self._check_if_allowed(id_user=id_user, id_spot=id_spot)
+
         spot = self.get_by_id(id_spot=id_spot)
         if not (spot):
             raise RecordNotFoundException()

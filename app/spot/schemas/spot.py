@@ -66,7 +66,7 @@ class SpotView(Spot):
 
 @omit("images")
 class SpotCreate(Spot):
-    id_user: UUID
+    id_user: Optional[UUID]
     lat: Optional[Decimal]
     long: Optional[Decimal]
 
