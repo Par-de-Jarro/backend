@@ -4,7 +4,7 @@ from typing import List, Optional
 from uuid import UUID
 
 from fastapi_qp import QueryParam
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from app.common.schemas import omit
 from app.user.schemas.user import UserView
@@ -67,6 +67,8 @@ class SpotView(Spot):
 @omit("images")
 class SpotCreate(Spot):
     id_user: UUID
+    lat: Optional[Decimal]
+    long: Optional[Decimal]
 
 
 class SpotUpdate(BaseModel):
@@ -93,4 +95,4 @@ class SpotSearchParams(BaseModel, QueryParam):
     has_elevator: Optional[bool]
     value_max: Optional[Decimal]
     value_min: Optional[Decimal]
-    distance_range: Optional[Decimal]
+    distance_range: Optional[Decimal] = Field(default=0)
