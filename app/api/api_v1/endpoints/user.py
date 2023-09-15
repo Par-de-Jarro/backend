@@ -22,12 +22,12 @@ def create_user(user: UserCreate, service: UserService = Depends(deps.get_user_s
 
 
 @router.post(
-    "/{id_user}/upload",
+    "/upload",
     response_model=UserView,
     dependencies=[Depends(deps.hass_access)],
 )
 def upload_profile_image(
-    id_user: UUID,
+    id_user: UUID = Depends(deps.get_id_user_by_auth_token),
     file: UploadFile = File(...),
     service: UserService = Depends(deps.get_user_service),
 ):
@@ -60,18 +60,23 @@ def get_by_id(id_user: UUID, service: UserService = Depends(deps.get_user_servic
     return service.get_by_id(id_user=id_user)
 
 
-@router.put("/{id_user}", response_model=UserView)
+@router.put("/", response_model=UserView)
 def update_user(
-    id_user: UUID, update: UserUpdate, service: UserService = Depends(deps.get_user_service)
+    update: UserUpdate,
+    id_user: UUID = Depends(deps.get_id_user_by_auth_token),
+    service: UserService = Depends(deps.get_user_service),
 ):
     return service.update(id_user=id_user, update=update)
 
 
 @router.delete(
-    "/{id_user}",
+    "/",
     dependencies=[Depends(deps.hass_access)],
 )
-def delete_user(id_user: UUID, service: UserService = Depends(deps.get_user_service)):
+def delete_user(
+    id_user: UUID = Depends(deps.get_id_user_by_auth_token),
+    service: UserService = Depends(deps.get_user_service),
+):
     try:
         service.delete(id_user=id_user)
     except Exception as e:

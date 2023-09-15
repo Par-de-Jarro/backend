@@ -21,7 +21,7 @@ class AuthService:
         self.JWT_REFRESH_SECRET_KEY = JWT_REFRESH_SECRET_KEY
         self.JWT_SECRET_KEY = JWT_SECRET_KEY
 
-    def auth(self, token: str) -> bool:
+    def auth(self, token: str):
         try:
             payload = jwt.decode(token, self.JWT_SECRET_KEY, algorithms=[self.ALGORITHM])
             exp = datetime.fromtimestamp(payload["exp"])
@@ -35,15 +35,13 @@ class AuthService:
                     headers={"WWW-Authenticate": "Bearer"},
                 )
 
-            self.user_service.get_by_id(id_user=UUID(token_data.id_user))
+            return self.user_service.get_by_id(id_user=UUID(token_data.id_user))
 
         except (jwt.JWTError, ValidationError, RecordNotFoundException):
             raise AuthExceptionHTTPException(
                 status_code=403,
                 detail="Could not validate credentials",
             )
-
-        return True
 
     def create_tokens(self, session_create: SessionCreate) -> AuthResponse:
         users = self.user_service.get_all(UserSearchParams(email=session_create.email))
