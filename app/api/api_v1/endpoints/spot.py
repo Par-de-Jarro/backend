@@ -44,7 +44,7 @@ def get_all(
     "/search",
     response_model=List[SpotView],
 )
-def searh(
+def search(
     filters: SpotSearchParams = Depends(SpotSearchParams.params()),
     service: SpotService = Depends(deps.get_spot_service),
 ):
