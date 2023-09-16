@@ -26,8 +26,11 @@ def user_client(client):
 
 
 @pytest.fixture
-def user(user_client):
+def user(user_client, session, make_university):
     user_primary_data = {"email": "email@email.com.br", "password": "SEGREDO!"}
+    university = make_university()
+    session.add(university)
+    session.commit()
 
     data = {
         "name": "Ricardinho",
@@ -38,6 +41,7 @@ def user(user_client):
         "course": "Ciência da Computação",
         "bio": "Teste",
         "password": user_primary_data["password"],
+        "id_university": university.id_university,
     }
     user_client.create(json.dumps(data))
 

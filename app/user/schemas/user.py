@@ -6,6 +6,7 @@ from fastapi_qp import QueryParam
 from pydantic import BaseModel, EmailStr, Field
 
 from app.common.schemas import omit
+from app.university.schemas.university import UniversityView
 
 cellphone_field = Field(min_length=11, max_length=11)
 document_id_field = Field(min_length=11, max_length=11)
@@ -25,6 +26,7 @@ class UserBase(BaseModel):
 @omit("profile_img")
 class UserCreate(UserBase):
     password: str
+    id_university: UUID
 
 
 class UserUpdate(UserBase):
@@ -37,6 +39,7 @@ class UserUpdate(UserBase):
     birthdate: Optional[date]
     course: Optional[str]
     bio: Optional[str]
+    id_university: Optional[UUID]
 
 
 @omit("password")
@@ -51,6 +54,7 @@ class UserCreateHashPassword(UserCreate):
 
 class UserView(UserBase):
     id_user: UUID
+    university: UniversityView
 
     class Config:
         orm_mode = True
