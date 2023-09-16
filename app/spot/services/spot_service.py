@@ -6,9 +6,9 @@ from fastapi import UploadFile
 from sqlalchemy.orm import Session
 
 from app.common.exceptions import AuthExceptionHTTPException, RecordNotFoundException
-from app.common.lib.google_address_api import GoogleAddressApi
 from app.common.repositories.aws_repository import AWSRepository
 from app.common.repositories.base import haversine
+from app.common.repositories.google_address_api import GoogleAddressApi
 from app.common.services.base import BaseService
 from app.spot.models.spot import Spot
 from app.spot.repositories.spot_repository import SpotFinder, SpotRepository
