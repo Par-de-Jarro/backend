@@ -1,5 +1,6 @@
-from sqlalchemy import Column, Date, String, Text, text
+from sqlalchemy import Column, Date, ForeignKey, String, Text, text
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import relationship
 
 from app.common.models.table_model import TableModel
 from app.db.database import Base
@@ -35,3 +36,17 @@ class User(Base, TableModel):
     birthdate = Column(Date, nullable=False)
 
     course = Column(String(50), nullable=True)
+
+    id_university = Column(
+        ForeignKey(
+            "university.id_university",
+            name="user_university_id_university",
+        ),
+        nullable=False,
+        index=True,
+    )
+
+    university = relationship(
+        "University",
+        foreign_keys=id_university,
+    )
