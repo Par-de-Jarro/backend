@@ -34,7 +34,11 @@ def user(make_user):
     return make_user()
 
 
-def test_create_user(user_client):
+def test_create_user(user_client, session, make_university):
+    university = make_university()
+    session.add(university)
+    session.commit()
+
     data = {
         "name": "Ricardinho",
         "email": "teste@email.com",
@@ -44,6 +48,7 @@ def test_create_user(user_client):
         "course": "Ciência da Computação",
         "bio": "Teste",
         "password": "123456",
+        "id_university": university.id_university,
     }
 
     response = user_client.create(json.dumps(data))
