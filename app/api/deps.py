@@ -1,10 +1,11 @@
-from fastapi import Depends
+from fastapi import Depends, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
 
 from app.auth.services.auth import AuthService
 from app.common.exceptions import AuthExceptionHTTPException
 from app.db.database import SessionLocal
+from app.spot.services.spot_service import SpotService
 from app.user.services.user_service import UserService
 
 
@@ -26,11 +27,25 @@ def get_user_service(db: Session = Depends(get_db)):
     return UserService(db)
 
 
+def get_spot_service(db: Session = Depends(get_db)):
+    return SpotService(db)
+
+
 def get_auth_service(user_service: UserService = Depends(get_user_service)):
     return AuthService(user_service=user_service)
 
 
 security = HTTPBearer()
+
+
+async def get_id_user_by_auth_token(
+    request: Request,
+    auth_service: AuthService = Depends(get_auth_service),
+):
+    auth_token = request.headers.get("Authorization").split(" ")[1]
+    auth_user = auth_service.auth(token=auth_token)
+
+    return auth_user.id_user
 
 
 def hass_access(
@@ -42,10 +57,14 @@ def hass_access(
             raise AuthExceptionHTTPException(
                 status_code=403, detail="Invalid authentication scheme."
             )
-        if not auth_service.auth(token=credentials.credentials):
+
+        auth_user = auth_service.auth(token=credentials.credentials)
+
+        if not auth_user:
             raise AuthExceptionHTTPException(
                 status_code=403, detail="Invalid token or expired token."
             )
-        return credentials.credentials
+
+        return auth_user
     else:
         raise AuthExceptionHTTPException(status_code=403, detail="Invalid authorization code.")

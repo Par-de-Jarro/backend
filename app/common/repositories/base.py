@@ -1,9 +1,10 @@
 from datetime import datetime
+from decimal import Decimal
 from typing import Generic, List, Optional, TypeVar, Union
 from uuid import UUID
 
 import pydantic
-from sqlalchemy import Column
+from sqlalchemy import Column, Numeric, cast, func
 from sqlalchemy.orm import Query, Session
 from sqlalchemy.sql import update
 
@@ -157,3 +158,24 @@ class BulkOperations(Generic[CREATE, UPDATE]):
                 .on_conflict_do_nothing(index_elements=[*(self.model_pk)])
             )
             self.db.execute(insert_stmt)
+
+
+def haversine(lat_column: Column, long_column: Column, lat: Decimal, long: Decimal):
+    earth_in_km = 6371
+
+    return func.round(
+        cast(
+            earth_in_km
+            * 2
+            * func.asin(
+                func.sqrt(
+                    func.pow(func.sin(func.radians((lat - lat_column) / 2)), 2)
+                    + func.cos(func.radians(lat_column))
+                    * func.cos(func.radians(lat))
+                    * func.pow(func.sin(func.radians(long - long_column) / 2), 2)
+                )
+            ),
+            Numeric,
+        ),
+        2,
+    )
