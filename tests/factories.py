@@ -45,3 +45,18 @@ def make_university():
         return models.University(id_university=uuid.uuid4(), **{**defaults, **overrides})
 
     return _make_university
+
+
+@pytest.fixture
+def make_spot():
+    defaults = dict(
+        name="Spot Teste",
+        description="Teste",
+        lat=-7.216306580255391,
+        long=-35.909625553967125,
+    )
+
+    def _make_spot(**overrides):
+        return models.Spot(id_spot=uuid.uuid4(), **{**defaults, **overrides})
+
+    return _make_spot
