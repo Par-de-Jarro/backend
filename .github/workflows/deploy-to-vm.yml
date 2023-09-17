@@ -32,7 +32,7 @@ jobs:
                 API_TOKEN_AUTH_PASSWORD=${{ secrets.API_TOKEN_AUTH_PASSWORD }}" > $TEMP_ENV
           TEMP=$(mktemp)
           echo "${{ secrets.SERVER_SSH_PRIVATE_KEY }}" > $TEMP
-          scp -i $TEMP $TEMP_ENV ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }}:/home/ubuntu/production_backend/.env
+          scp -o 'StrictHostKeyChecking no' -i $TEMP $TEMP_ENV ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }}:/home/ubuntu/production_backend/.env
           
       - name: Deploy
         run: |
