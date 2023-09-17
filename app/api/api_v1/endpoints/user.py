@@ -1,7 +1,7 @@
 from typing import List
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, File, UploadFile
+from fastapi import APIRouter, Depends, File, Security, UploadFile
 
 from app.api import deps
 from app.common.exceptions import (
@@ -14,9 +14,10 @@ from app.user.schemas.user import UserCreate, UserSearchParams, UserUpdate, User
 from app.user.services.user_service import UserService
 
 router = APIRouter()
+validate_token = deps.token_auth()
 
 
-@router.post("/", response_model=UserView)
+@router.post("/", response_model=UserView, dependencies=[Security(validate_token)])
 def create_user(user: UserCreate, service: UserService = Depends(deps.get_user_service)):
     return service.create(user)
 

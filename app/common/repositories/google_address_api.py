@@ -8,9 +8,9 @@ class GoogleAddressApi:
         self.base_url = "https://maps.googleapis.com/maps/api/geocode/json"
         self.auth = GOOGLE_API_ADDRESS_KEY
 
-    def get_location_coordinates(self, street: str, city: str, zip_code: str):
+    def get_location_coordinates(self, location: str):
         response = requests.get(
-            self.base_url, params={"key": self.auth, "address": f"{street} {city} {zip_code}"}
+            self.base_url, params={"key": self.auth, "address": location}
         ).json()["results"]
 
         address = response[0]
