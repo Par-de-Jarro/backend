@@ -1,7 +1,7 @@
 from typing import List
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, File, UploadFile
+from fastapi import APIRouter, Depends, File, Security, UploadFile
 
 from app.api import deps
 from app.common.exceptions import (
@@ -14,6 +14,7 @@ from app.spot.schemas.spot import SpotCreate, SpotSearchParams, SpotUpdate, Spot
 from app.spot.services.spot_service import SpotService
 
 router = APIRouter()
+validate_token = deps.token_auth()
 
 
 @router.post(
@@ -30,20 +31,14 @@ def create_spot(
     return service.create(create=create)
 
 
-@router.get(
-    "/",
-    response_model=List[SpotView],
-)
+@router.get("/", response_model=List[SpotView], dependencies=[Security(validate_token)])
 def get_all(
     service: SpotService = Depends(deps.get_spot_service),
 ):
     return service.get_all()
 
 
-@router.get(
-    "/search",
-    response_model=List[SpotView],
-)
+@router.get("/search", response_model=List[SpotView], dependencies=[Security(validate_token)])
 def search(
     filters: SpotSearchParams = Depends(SpotSearchParams.params()),
     service: SpotService = Depends(deps.get_spot_service),
@@ -51,10 +46,7 @@ def search(
     return service.search(filters)
 
 
-@router.get(
-    "/{id_spot}",
-    response_model=SpotView,
-)
+@router.get("/{id_spot}", response_model=SpotView, dependencies=[Security(validate_token)])
 def get_by_id(id_spot: UUID, service: SpotService = Depends(deps.get_spot_service)):
     try:
         return service.get_by_id(id_spot=id_spot)
@@ -72,7 +64,7 @@ def update_spot(
     try:
         return service.update(id_spot=id_spot, update=update, id_user=id_user)
     except RecordNotFoundException:
-        raise RecordNotFoundHTTPException(detail="User not found")
+        raise RecordNotFoundHTTPException(detail="Spot not found")
 
 
 @router.delete(
@@ -91,7 +83,7 @@ def delete_spot(
 
 
 @router.post("/{id_spot}/upload", dependencies=[Depends(deps.hass_access)], response_model=SpotView)
-def upload_announcement_images(
+def upload_spot_images(
     id_spot: UUID,
     files: List[UploadFile] = File(...),
     id_user: UUID = Depends(deps.get_id_user_by_auth_token),

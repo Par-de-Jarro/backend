@@ -9,7 +9,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm.session import Session
 from sqlalchemy_utils import create_database, database_exists
 
-from app.api.deps import get_db, hass_access
+from app.api.deps import get_db, hass_access, token_auth
 from app.core.settings import SQLALCHEMY_DATABASE_URL
 from app.main import app
 from tests.factories import make_university, make_user  # noqa: F401
@@ -76,8 +76,10 @@ def client(session):
 
     app.dependency_overrides[get_db] = override_get_db
     app.dependency_overrides[hass_access] = skip_auth
+    app.dependency_overrides[token_auth] = skip_auth
     test_client = TestClient(app)
 
     yield test_client
     del app.dependency_overrides[get_db]
     del app.dependency_overrides[hass_access]
+    del app.dependency_overrides[token_auth]
