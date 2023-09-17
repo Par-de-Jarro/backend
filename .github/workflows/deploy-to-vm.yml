@@ -19,6 +19,21 @@ jobs:
           user: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
 
+      - name: Create .env file
+        run: |
+          TEMP_ENV=$(mktemp)
+          echo "SQLALCHEMY_DATABASE_URL=${{ secrets.SQLALCHEMY_DATABASE_URL }}
+                JWT_REFRESH_SECRET_KEY=
+                JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}
+                AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+                AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                AWS_BUCKET_NAME=${{ secrets.AWS_BUCKET_NAME }}
+                GOOGLE_API_ADDRESS_KEY=${{ secrets.GOOGLE_API_ADDRESS_KEY }}
+                API_TOKEN_AUTH_PASSWORD=${{ secrets.API_TOKEN_AUTH_PASSWORD }}" > $TEMP_ENV
+          TEMP=$(mktemp)
+          echo "${{ secrets.SERVER_SSH_PRIVATE_KEY }}" > $TEMP
+          scp -i $TEMP $TEMP_ENV ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }}:/home/ubuntu/production_backend/.env
+          
       - name: Deploy
         run: |
          TEMP=$(mktemp)
