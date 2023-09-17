@@ -2,6 +2,8 @@ from uuid import UUID
 
 from requests import Session
 
+from app.core.settings import API_TOKEN_AUTH_PASSWORD
+
 
 class BaseClient:
     def __init__(self, client, endpoint_path):
@@ -10,6 +12,7 @@ class BaseClient:
         self.headers = {
             **client.headers,
             "Content-type": "application/json",
+            "Api-Key": API_TOKEN_AUTH_PASSWORD,
         }
 
     def get_by_id(self, id: UUID):
