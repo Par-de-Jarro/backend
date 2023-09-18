@@ -1,12 +1,17 @@
 import json
+from unittest.mock import Mock
 from uuid import UUID
 
 import pytest
+from fastapi.testclient import TestClient
 
 from app.api.deps import get_id_user_by_auth_token
 from app.main import app
+from app.spot.schemas.spot import SpotCreate, SpotView
 
 from .base_client import BaseClient
+
+client = TestClient(app)
 
 
 async def override_id_user(id_user: UUID):
@@ -40,21 +45,25 @@ def user(make_user):
 
 
 def test_create_spot(spot_client, spot, user, fastapi_dep, session):
+    mock_service = Mock()
+    mock_service.create.return_value = SpotView(
+        id=UUID("01234567-89ab-cdef-0123-456789abcdef"), name="Test Spot"
+    )
     session.add(spot)
     session.commit()
 
     with fastapi_dep(app).override({get_id_user_by_auth_token: user.id_user}):
-        data = {
-            "name": "Spot Teste",
-            "description": "Teste",
-            "lat": -7.216306580255391,
-            "long": -35.909625553967125,
-        }
+        response = client.post(
+            "/spot/",
+            json={"name": "Test Spot", "description": "Test Description"},
+            headers={"Authorization": "Bearer mocktoken"},
+        )
 
-    response = spot_client.create(json.dumps(data), id_user=user.id_user)
     assert response.status_code == 200
-    assert response.json()["name"] == "Spot Teste"
-    assert response.json()["description"] == "Teste"
+    assert response.json() == {"id": "01234567-89ab-cdef-0123-456789abcdef", "name": "Test Spot"}
+    mock_service.create.assert_called_once_with(
+        create=SpotCreate(name="Test Spot", description="Test Description")
+    )
 
 
 def test_get_all_spot(spot_client, spot, session):
