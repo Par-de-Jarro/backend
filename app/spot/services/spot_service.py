@@ -13,6 +13,8 @@ from app.common.services.base import BaseService
 from app.spot.models.spot import Spot
 from app.spot.repositories.spot_repository import SpotFinder, SpotRepository
 from app.spot.schemas.spot import Images, SpotCreate, SpotSearchParams, SpotUpdate, SpotView
+from app.university.models.university import University
+from app.university.schemas.university import UniversityView
 from app.user.models.user import User
 from app.user.schemas.user import UserView
 
@@ -94,7 +96,13 @@ class SpotService(BaseService[SpotCreate, SpotUpdate, SpotView]):
         return self.update(id_spot=id_spot, update=spot_update)
 
     def _parse_result(self, result) -> SpotView:
-        return SpotView(**result, owner=UserView(**result["User"].__dict__))
+        return SpotView(
+            **result,
+            owner=UserView(
+                **result["User"].__dict__,
+                university=UniversityView(**result["University"].__dict__),
+            ),
+        )
 
     def _get_base_query(self, lat: Decimal, long: Decimal):
         return (
@@ -105,6 +113,7 @@ class SpotService(BaseService[SpotCreate, SpotUpdate, SpotView]):
                 haversine(Spot.lat, Spot.long, lat, long).label("distance"),
             )
             .add_entity(User)
+            .add_entity(University)
             .filter(Spot.deleted_at.is_(None))
             .order_by("distance")
         )

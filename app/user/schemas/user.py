@@ -54,7 +54,7 @@ class UserCreateHashPassword(UserCreate):
 
 class UserView(UserBase):
     id_user: UUID
-    university: Optional[UniversityView]
+    university: UniversityView
 
     class Config:
         orm_mode = True
