@@ -47,7 +47,21 @@ def user(make_user):
 def test_create_spot(spot_client, spot, user, fastapi_dep, session):
     mock_service = Mock()
     mock_service.create.return_value = SpotView(
-        id=UUID("01234567-89ab-cdef-0123-456789abcdef"), name="Test Spot"
+        id=UUID("01234567-89ab-cdef-0123-456789abcdef"),
+        name="Test Spot",
+        description="Test Description",
+        personal_quota=0,
+        type="spot",
+        lat=-7.216306580255391,
+        long=-35.909625553967125,
+        value=0.0,
+        street="rua",
+        zip_code="12345678",
+        number=1,
+        state="estado",
+        key="key",
+        id_spot=UUID("01234567-89ab-cdef-0123-456789abcdef"),
+        owner=user,
     )
     session.add(spot)
     session.commit()
