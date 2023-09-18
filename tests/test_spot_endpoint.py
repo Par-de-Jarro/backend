@@ -1,5 +1,5 @@
 import json
-from unittest.mock import Mock
+from unittest.mock import patch
 from uuid import UUID
 
 import pytest
@@ -7,7 +7,6 @@ from fastapi.testclient import TestClient
 
 from app.api.deps import get_id_user_by_auth_token
 from app.main import app
-from app.spot.schemas.spot import SpotCreate, SpotView
 
 from .base_client import BaseClient
 
@@ -44,40 +43,42 @@ def user(make_user):
     return make_user()
 
 
-def test_create_spot(spot_client, spot, user, fastapi_dep, session):
-    mock_service = Mock()
-    mock_service.create.return_value = SpotView(
-        id=UUID("01234567-89ab-cdef-0123-456789abcdef"),
-        name="Test Spot",
-        description="Test Description",
-        personal_quota=0,
-        type="spot",
-        lat=-7.216306580255391,
-        long=-35.909625553967125,
-        value=0.0,
-        street="rua",
-        zip_code="12345678",
-        number=1,
-        state="estado",
-        key="key",
-        id_spot=UUID("01234567-89ab-cdef-0123-456789abcdef"),
-        owner=user,
-    )
-    session.add(spot)
+def test_create_spot(spot_client, user, fastapi_dep, session):
+    session.add(user)
     session.commit()
 
-    with fastapi_dep(app).override({get_id_user_by_auth_token: user.id_user}):
-        response = client.post(
-            "/spot/",
-            json={"name": "Test Spot", "description": "Test Description"},
-            headers={"Authorization": "Bearer mocktoken"},
-        )
+    spot_body = {
+        "name": "Casa Teste",
+        "description": "Casa de Teste",
+        "personal_quota": 10,
+        "type": "house",
+        "value": 200,
+        "street": "Avenida de Testes",
+        "zip_code": "58434500",
+        "number": "5255",
+        "complement": "B20",
+        "city": "Campina Grande",
+        "state": "PB",
+        "key": {
+            "convenience": {"rooms_quantity": 0, "bathrooms_quantity": 0, "has_elevator": True},
+            "allowance": {"allow_pet": True, "allow_smoker": True},
+        },
+    }
 
-    assert response.status_code == 200
-    assert response.json() == {"id": "01234567-89ab-cdef-0123-456789abcdef", "name": "Test Spot"}
-    mock_service.create.assert_called_once_with(
-        create=SpotCreate(name="Test Spot", description="Test Description")
-    )
+    with fastapi_dep(app).override({get_id_user_by_auth_token: user.id_user}):
+        with patch(
+            "app.common.repositories.google_address_api.GoogleAddressApi.get_location_coordinates",
+            return_value=(10, 20),
+        ) as mocked_method:
+            response = spot_client.create(
+                json.dumps(spot_body),
+            )
+
+            mocked_method.assert_called_once()
+            assert response.json()["lat"] == 10
+            assert response.json()["long"] == 20
+            assert response.json()["owner"]["id_user"] == str(user.id_user)
+            assert response.status_code == 200
 
 
 def test_get_all_spot(spot_client, spot, session):
