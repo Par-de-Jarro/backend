@@ -7,6 +7,7 @@ from fastapi.testclient import TestClient
 
 from app.api.deps import get_id_user_by_auth_token
 from app.main import app
+from app.spot.schemas.spot import SpotCreate, SpotView
 
 from .base_client import BaseClient
 
