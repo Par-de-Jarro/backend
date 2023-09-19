@@ -63,10 +63,12 @@ def make_spot():
         complement="B20",
         city="Campina Grande",
         state="PB",
-        key="convenience: {rooms_quantity: 2, bathrooms_quantity: 2, has_elevator: true}, allowance: {allow_pet: true, allow_smoker: true}",
+        key="convenience": {rooms_quantity: 2, bathrooms_quantity: 2, has_elevator: true},
+        "allowance": {allow_pet: true, allow_smoker: true},
     )
 
     def _make_spot(**overrides):
+        new_defaults = defaults
         user = make_user()
         new_defaults = dict(id_user=user.id_user, **new_defaults)
         return models.Spot(id_spot=uuid.uuid4(), **{**new_defaults, **overrides})
