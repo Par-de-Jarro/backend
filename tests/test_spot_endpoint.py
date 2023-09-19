@@ -81,14 +81,14 @@ def test_create_spot(spot_client, user, fastapi_dep, session):
             assert response.status_code == 200
 
 
-def test_get_all_spot(spot_client, spot, session):
+def test_get_all_spot(fastapi_dep, spot_client, spot, session):
     session.add(spot)
     session.commit()
-
-    response = spot_client.get_all()
-    assert response.status_code == 200
-    assert response.json()[0]["name"] == "Spot Teste"
-    assert response.json()[0]["description"] == "Teste"
+    with fastapi_dep(app).override({get_id_user_by_auth_token: user.id_user}):
+        response = spot_client.get_all()
+        assert response.status_code == 200
+        assert response.json()[0]["name"] == "Spot Teste"
+        assert response.json()[0]["description"] == "Teste"
 
 
 def test_search_spot(spot_client, spot, session):
