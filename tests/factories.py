@@ -54,9 +54,21 @@ def make_spot():
         description="Teste",
         lat=-7.216306580255391,
         long=-35.909625553967125,
+        personal_quota=10,
+        type="house",
+        value=200,
+        street="Avenida de Testes",
+        zip_code="58434500",
+        number="5255",
+        complement="B20",
+        city="Campina Grande",
+        state="PB",
+        key="convenience: {rooms_quantity: 2, bathrooms_quantity: 2, has_elevator: true}, allowance: {allow_pet: true, allow_smoker: true}",
     )
 
     def _make_spot(**overrides):
-        return models.Spot(id_spot=uuid.uuid4(), **{**defaults, **overrides})
+        user = make_user()
+        new_defaults = dict(id_user=user.id_user, **new_defaults)
+        return models.Spot(id_spot=uuid.uuid4(), **{**new_defaults, **overrides})
 
     return _make_spot
