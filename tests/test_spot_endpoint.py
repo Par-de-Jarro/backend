@@ -65,7 +65,7 @@ def test_create_spot(spot_client, user, fastapi_dep, session):
         },
     }
 
-    with fastapi_dep(app).override({get_: user.id_user}):
+    with fastapi_dep(app).override({get_id_user_by_auth_token: user.id_user}):
         with patch(
             "app.common.repositories.google_address_api.GoogleAddressApi.get_location_coordinates",
             return_value=(10, 20),
