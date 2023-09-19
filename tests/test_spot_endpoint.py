@@ -65,7 +65,7 @@ def test_create_spot(spot_client, user, fastapi_dep, session):
         },
     }
 
-    with fastapi_dep(app).override({get_id_user_by_auth_token: user.id_user}):
+    with fastapi_dep(app).override({get_: user.id_user}):
         with patch(
             "app.common.repositories.google_address_api.GoogleAddressApi.get_location_coordinates",
             return_value=(10, 20),
@@ -101,15 +101,13 @@ def test_search_spot(spot_client, spot, session):
     assert response.json()[0]["description"] == "Teste"
 
 
-def test_get_by_id_spot(fastapi_dep, spot_client, spot, session):
+def test_get_by_id_spot(spot_client, spot, session):
     session.add(spot)
     session.commit()
-    with fastapi_dep(app).override({get_id_user_by_auth_token: spot.id_spot}):
-        spot_client.get_by_id()
-        response = spot_client.get_by_id(spot.id_spot)
-        assert response.status_code == 200
-        assert response.json()["name"] == "Spot Teste"
-        assert response.json()["description"] == "Teste"
+    response = spot_client.get_by_id(spot.id_spot)
+    assert response.status_code == 200
+    assert response.json()["name"] == "Spot Teste"
+    assert response.json()["description"] == "Teste"
 
 
 @pytest.mark.parametrize(
