@@ -101,27 +101,27 @@ def test_search_spot(spot_client, spot, session):
     assert response.json()[0]["description"] == "Teste"
 
 
-def test_get_by_id_spot(spot_client, spot, session):
+def test_get_by_id_spot(fastapi_dep, spot_client, spot, session):
     session.add(spot)
     session.commit()
-
-    response = spot_client.get_by_id(spot.id_spot)
-    assert response.status_code == 200
-    assert response.json()["name"] == "Spot Teste"
-    assert response.json()["description"] == "Teste"
+    with fastapi_dep(app).override({get_id_user_by_auth_token: spot.id_spot}):
+        spot_client.get_by_id()
+        response = spot_client.get_by_id(spot.id_spot)
+        assert response.status_code == 200
+        assert response.json()["name"] == "Spot Teste"
+        assert response.json()["description"] == "Teste"
 
 
 @pytest.mark.parametrize(
     "field,expected_field",
     [("name", "Novo nome"), ("description", "Teste")],
 )
-def test_update_spot(fastapi_dep, spot, session, spot_client, field, expected_field):
+def test_update_spot(spot, fastapi_dep, session, spot_client, field, expected_field):
     session.add(spot)
     session.commit()
-
     with fastapi_dep(app).override({get_id_user_by_auth_token: spot.id_spot}):
+        spot_client.update_spot()
         data = {field: expected_field}
-
         response = spot_client.update(update=json.dumps(data))
         assert response.status_code == 200
         assert response.json()[field] == expected_field
