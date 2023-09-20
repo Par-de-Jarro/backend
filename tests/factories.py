@@ -48,7 +48,7 @@ def make_university():
 
 
 @pytest.fixture
-def make_spot():
+def make_spot(session, make_user):
     defaults = dict(
         name="Spot Teste",
         description="Teste",
@@ -70,6 +70,8 @@ def make_spot():
     def _make_spot(**overrides):
         new_defaults = defaults
         user = make_user()
+        session.add(user)
+        session.commit()
         new_defaults = dict(id_user=user.id_user, **new_defaults)
         return models.Spot(id_spot=uuid.uuid4(), **{**new_defaults, **overrides})
 

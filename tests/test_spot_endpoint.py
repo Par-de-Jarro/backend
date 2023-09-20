@@ -81,7 +81,7 @@ def test_create_spot(spot_client, user, fastapi_dep, session):
             assert response.status_code == 200
 
 
-def test_get_all_spot(fastapi_dep, spot_client, spot, session):
+def test_get_all_spot(fastapi_dep, spot_client, user, spot, session):
     session.add(spot)
     session.commit()
     with fastapi_dep(app).override({get_id_user_by_auth_token: user.id_user}):
