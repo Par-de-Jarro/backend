@@ -55,7 +55,7 @@ def make_spot(session, make_user):
         lat=-7.216306580255391,
         long=-35.909625553967125,
         personal_quota=10,
-        type="house",
+        type="HOUSE",
         value=200,
         street="Avenida de Testes",
         zip_code="58434500",
@@ -63,8 +63,10 @@ def make_spot(session, make_user):
         complement="B20",
         city="Campina Grande",
         state="PB",
-        key="convenience: {rooms_quantity: 2, bathrooms_quantity: 2, has_elevator: true},"
-        + "allowance: {allow_pet: true, allow_smoker: true}",
+        key=dict(
+            convenience=dict(rooms_quantity=2, bathrooms_quantity=2, has_elevator=True),
+            allowance=dict(allow_pet=True, allow_smoker=False),
+        ),
     )
 
     def _make_spot(**overrides):

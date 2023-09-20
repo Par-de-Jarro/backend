@@ -21,11 +21,8 @@ class SpotClient(BaseClient):
     def __init__(self, client):
         super().__init__(client, endpoint_path="spot")
 
-    def update(self, update):
-        return self.client.put(f"/{self.path}/", data=update, headers=self.headers)
-
-    def delete(self):
-        return self.client.delete(f"/{self.path}/", headers=self.headers)
+    def search(self):
+        return self.client.delete(f"/{self.path}/search", headers=self.headers)
 
 
 @pytest.fixture
@@ -81,21 +78,10 @@ def test_create_spot(spot_client, user, fastapi_dep, session):
             assert response.status_code == 200
 
 
-def test_get_all_spot(fastapi_dep, spot_client, user, spot, session):
+def test_get_all_spot(spot_client, spot, session):
     session.add(spot)
     session.commit()
-    with fastapi_dep(app).override({get_id_user_by_auth_token: user.id_user}):
-        response = spot_client.get_all()
-        assert response.status_code == 200
-        assert response.json()[0]["name"] == "Spot Teste"
-        assert response.json()[0]["description"] == "Teste"
-
-
-def test_search_spot(spot_client, spot, session):
-    session.add(spot)
-    session.commit()
-
-    response = spot_client.search()
+    response = spot_client.get_all()
     assert response.status_code == 200
     assert response.json()[0]["name"] == "Spot Teste"
     assert response.json()[0]["description"] == "Teste"
@@ -117,10 +103,10 @@ def test_get_by_id_spot(spot_client, spot, session):
 def test_update_spot(spot, fastapi_dep, session, spot_client, field, expected_field):
     session.add(spot)
     session.commit()
-    with fastapi_dep(app).override({get_id_user_by_auth_token: spot.id_spot}):
-        spot_client.update_spot()
+
+    with fastapi_dep(app).override({get_id_user_by_auth_token: spot.id_user}):
         data = {field: expected_field}
-        response = spot_client.update(update=json.dumps(data))
+        response = spot_client.update(id=spot.id_spot, update=json.dumps(data))
         assert response.status_code == 200
         assert response.json()[field] == expected_field
 
@@ -129,8 +115,8 @@ def test_delete_spot(spot, fastapi_dep, session, spot_client):
     session.add(spot)
     session.commit()
 
-    with fastapi_dep(app).override({get_id_user_by_auth_token: spot.id_spot}):
-        spot_client.delete()
+    with fastapi_dep(app).override({get_id_user_by_auth_token: spot.id_user}):
+        spot_client.delete(id=spot.id_spot)
         response = spot_client.get_by_id(id=spot.id_spot)
         assert response.status_code == 404
         assert response.json()["detail"] == "Spot not found"
