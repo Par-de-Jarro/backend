@@ -10,6 +10,12 @@ jobs:
     steps:
       - uses: actions/checkout@master
 
+      - name: Stop Containers
+        run: |
+         TEMP=$(mktemp)
+         echo "${{ secrets.SERVER_SSH_PRIVATE_KEY }}" > $TEMP
+         ssh -o 'StrictHostKeyChecking no' -i $TEMP ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }} 'bash -s' < scripts/stop-containers.sh
+
       - name: Copy files to host
         uses: nogsantos/scp-deploy@master
         with:
@@ -38,4 +44,4 @@ jobs:
         run: |
          TEMP=$(mktemp)
          echo "${{ secrets.SERVER_SSH_PRIVATE_KEY }}" > $TEMP
-         ssh -o 'StrictHostKeyChecking no' -i $TEMP ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }} 'bash -s' < scripts/deploy.sh
+         ssh -o 'StrictHostKeyChecking no' -i $TEMP ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }} 'docker-compose -f /home/ubuntu/production_backend/docker-compose.yml up -d'
