@@ -21,6 +21,7 @@ class UserBase(BaseModel):
     birthdate: date
     course: str
     bio: str
+    gender: str
 
 
 @omit("profile_img")
@@ -39,6 +40,7 @@ class UserUpdate(UserBase):
     birthdate: Optional[date]
     course: Optional[str]
     bio: Optional[str]
+    gender: Optional[str]
     id_university: Optional[UUID]
 
 
