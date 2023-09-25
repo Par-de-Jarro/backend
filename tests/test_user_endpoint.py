@@ -49,12 +49,14 @@ def test_create_user(user_client, session, make_university):
         "bio": "Teste",
         "password": "123456",
         "id_university": university.id_university,
+        "gender": "male",
     }
 
     response = user_client.create(json.dumps(data))
     assert response.status_code == 200
     assert response.json()["name"] == "Ricardinho"
     assert response.json()["course"] == "Ciência da Computação"
+    assert response.json()["gender"] == "male"
 
 
 @pytest.mark.parametrize(
@@ -100,3 +102,25 @@ def test_list_user(user, session, user_client):
     response = user_client.get_all()
     assert response.status_code == 200
     assert len(response.json()) == 1
+
+
+def test_default_gender(user_client, session, make_university):
+    university = make_university()
+    session.add(university)
+    session.commit()
+
+    data = {
+        "name": "Ricardinho",
+        "email": "teste@email.com",
+        "cellphone": "11999999999",
+        "document_id": "12345678901",
+        "birthdate": "1990-04-13",
+        "course": "Ciência da Computação",
+        "bio": "Teste",
+        "password": "123456",
+        "id_university": university.id_university,
+    }
+
+    response = user_client.create(json.dumps(data))
+    assert response.status_code == 200
+    assert response.json()["gender"] == "uninformed"
