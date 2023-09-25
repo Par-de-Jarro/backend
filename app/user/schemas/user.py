@@ -36,6 +36,7 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     password: str
     id_university: UUID
+    gender: Optional[UserGender] = Field(default=UserGender.UNINFORMED)
 
 
 class UserUpdate(UserBase):
