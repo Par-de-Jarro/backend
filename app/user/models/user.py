@@ -1,9 +1,11 @@
-from sqlalchemy import Column, Date, ForeignKey, String, Text, text, CheckConstraint
+
+from sqlalchemy import Column, Date, ForeignKey, String, Text, text, Enum
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
 from app.common.models.table_model import TableModel
 from app.db.database import Base
+from app.user.schemas.user import UserGender
 
 
 class User(Base, TableModel):
@@ -37,15 +39,7 @@ class User(Base, TableModel):
 
     course = Column(String(50), nullable=True)
 
-    gender = Column(String(20), nullable=False,
-                    server_default=text("UNINFORMED"))
-
-    __table_args__ = (
-        CheckConstraint(
-            gender.in_(("MALE", "FEMALE", "NON-BINARY", "UNINFORMED")),
-            name="valid_gender_values",
-        ),
-    )
+    gender = Column(Enum(UserGender), nullable=False, server_default="UNINFORMED")
 
     id_university = Column(
         ForeignKey(
