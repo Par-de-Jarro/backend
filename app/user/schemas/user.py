@@ -1,4 +1,5 @@
 from datetime import date
+from enum import Enum
 from typing import Optional
 from uuid import UUID
 
@@ -12,6 +13,13 @@ cellphone_field = Field(min_length=11, max_length=11)
 document_id_field = Field(min_length=11, max_length=11)
 
 
+class UserGender(Enum):
+    FEMALE = "female"
+    MALE = "male"
+    NONBINARY = "non-binary"
+    UNINFORMED = "uninformed"
+
+
 class UserBase(BaseModel):
     name: str
     email: EmailStr
@@ -21,12 +29,14 @@ class UserBase(BaseModel):
     birthdate: date
     course: str
     bio: str
+    gender: UserGender
 
 
 @omit("profile_img")
 class UserCreate(UserBase):
     password: str
     id_university: UUID
+    gender: Optional[UserGender] = Field(default=UserGender.UNINFORMED)
 
 
 class UserUpdate(UserBase):
@@ -39,6 +49,7 @@ class UserUpdate(UserBase):
     birthdate: Optional[date]
     course: Optional[str]
     bio: Optional[str]
+    gender: Optional[UserGender]
     id_university: Optional[UUID]
 
 

@@ -1,9 +1,10 @@
-from sqlalchemy import Column, Date, ForeignKey, String, Text, text
+from sqlalchemy import Column, Date, Enum, ForeignKey, String, Text, text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
 from app.common.models.table_model import TableModel
 from app.db.database import Base
+from app.user.schemas.user import UserGender
 
 
 class User(Base, TableModel):
@@ -36,6 +37,8 @@ class User(Base, TableModel):
     birthdate = Column(Date, nullable=False)
 
     course = Column(String(50), nullable=True)
+
+    gender = Column(Enum(UserGender), nullable=False, server_default="UNINFORMED")
 
     id_university = Column(
         ForeignKey(
