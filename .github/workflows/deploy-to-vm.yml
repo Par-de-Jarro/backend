@@ -44,4 +44,4 @@ jobs:
         run: |
          TEMP=$(mktemp)
          echo "${{ secrets.SERVER_SSH_PRIVATE_KEY }}" > $TEMP
-         ssh -o 'StrictHostKeyChecking no' -i $TEMP ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }} 'docker-compose -f /home/ubuntu/production_backend/docker-compose.yml up -d'
+         ssh -o 'StrictHostKeyChecking no' -i $TEMP ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }} 'docker-compose -f /home/ubuntu/production_backend/docker-compose.yml up -d --build'
