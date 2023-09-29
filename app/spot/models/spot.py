@@ -33,6 +33,7 @@ class Spot(Base, TableModel):
         "User",
         foreign_keys=id_user,
     )
+    spot_users = relationship("SpotUser", back_populates="Spot")
 
     name = Column(String(50), nullable=False)
 
