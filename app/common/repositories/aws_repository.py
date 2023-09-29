@@ -27,7 +27,7 @@ class AWSRepository:
                     self.AWS_BUCKET_NAME,
                     file_path,
                 )
-                return f"https://{self.AWS_BUCKET_NAME}.s3.us-east-1.amazonaws.com/{file_path}"
+                return f"https://{self.AWS_BUCKET_NAME}.s3.us-east-2.amazonaws.com/{file_path}"
             except ClientError as e:
                 raise AWSConfigException(detail=e.msg)
 
