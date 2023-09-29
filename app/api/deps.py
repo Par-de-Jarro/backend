@@ -6,6 +6,7 @@ from app.auth.services.auth import AuthService
 from app.common.exceptions import AuthExceptionHTTPException
 from app.core.settings import API_TOKEN_AUTH_PASSWORD
 from app.db.database import SessionLocal
+from app.google.services.google import GoogleService
 from app.spot.services.spot_service import SpotService
 from app.university.services.university_service import UniversityService
 from app.user.services.user_service import UserService
@@ -39,6 +40,10 @@ def get_auth_service(user_service: UserService = Depends(get_user_service)):
 
 def get_university_service(db: Session = Depends(get_db)):
     return UniversityService(db)
+
+
+def get_google_service():
+    return GoogleService()
 
 
 security = HTTPBearer()
