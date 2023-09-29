@@ -6,12 +6,14 @@ from botocore.exceptions import ClientError
 from fastapi import UploadFile
 
 from app.common.exceptions import AWSConfigException
-from app.core.settings import AWS_BUCKET_NAME
+from app.core.settings import AWS_ACCESS_KEY_ID, AWS_BUCKET_NAME, AWS_SECRET_ACCESS_KEY
 
 
 class AWSRepository:
     def __init__(self, base_path: str):
-        self.s3 = boto3.client("s3")
+        self.s3 = boto3.client(
+            "s3", aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_ACCESS_KEY
+        )
         self.AWS_BUCKET_NAME = AWS_BUCKET_NAME
         self.base_path = base_path
 

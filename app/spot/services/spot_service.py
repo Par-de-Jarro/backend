@@ -93,7 +93,7 @@ class SpotService(BaseService[SpotCreate, SpotUpdate, SpotView]):
         images = [Images(image_order=index, image_url=image) for index, image in enumerate(images)]
         spot_update = SpotUpdate(images=images)
 
-        return self.update(id_spot=id_spot, update=spot_update)
+        return self.update(id_spot=id_spot, id_user=id_user, update=spot_update)
 
     def _parse_result(self, result) -> SpotView:
         return SpotView(

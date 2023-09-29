@@ -13,5 +13,7 @@ SQLALCHEMY_DATABASE_URL = config(
 JWT_REFRESH_SECRET_KEY = config("JWT_REFRESH_SECRET_KEY", default="refresh")
 JWT_SECRET_KEY = config("JWT_SECRET_KEY", default="secret")
 AWS_BUCKET_NAME = config("AWS_BUCKET_NAME", default="par-de-jarro")
+AWS_ACCESS_KEY_ID = config("AWS_ACCESS_KEY_ID", default="par-de-jarro")
+AWS_SECRET_ACCESS_KEY = config("AWS_SECRET_ACCESS_KEY", default=None)
 GOOGLE_API_ADDRESS_KEY = config("GOOGLE_API_ADDRESS_KEY", default=None)
 API_TOKEN_AUTH_PASSWORD = config("API_TOKEN_AUTH_PASSWORD", default="par-de-jarro")
