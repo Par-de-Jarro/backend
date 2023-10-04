@@ -8,6 +8,7 @@ from app.core.settings import API_TOKEN_AUTH_PASSWORD
 from app.db.database import SessionLocal
 from app.google.services.google import GoogleService
 from app.spot.services.spot_service import SpotService
+from app.spot.services.spot_entry_service import SpotEntryService
 from app.university.services.university_service import UniversityService
 from app.user.services.user_service import UserService
 
@@ -34,6 +35,10 @@ def get_spot_service(db: Session = Depends(get_db)):
     return SpotService(db)
 
 
+def get_spot_entry_service(db: Session = Depends(get_db)):
+    return SpotEntryService(db)
+
+
 def get_auth_service(user_service: UserService = Depends(get_user_service)):
     return AuthService(user_service=user_service)
 
@@ -50,8 +55,8 @@ security = HTTPBearer()
 
 
 async def get_id_user_by_auth_token(
-    request: Request,
-    auth_service: AuthService = Depends(get_auth_service),
+        request: Request,
+        auth_service: AuthService = Depends(get_auth_service),
 ):
     auth_token = request.headers.get("Authorization").split(" ")[1]
     auth_user = auth_service.auth(token=auth_token)
@@ -70,8 +75,8 @@ def token_auth():
     )
 
     async def validate_token(
-        api_token: str = Security(api_token_auth_header),
-        request: Request = Depends(get_request_object),
+            api_token: str = Security(api_token_auth_header),
+            request: Request = Depends(get_request_object),
     ):
         if "Api-Key" in request.headers:
             if api_token == API_TOKEN_AUTH_PASSWORD:
@@ -82,8 +87,8 @@ def token_auth():
 
 
 def hass_access(
-    credentials: HTTPAuthorizationCredentials = Depends(security),
-    auth_service: AuthService = Depends(get_auth_service),
+        credentials: HTTPAuthorizationCredentials = Depends(security),
+        auth_service: AuthService = Depends(get_auth_service),
 ):
     if credentials:
         if not credentials.scheme == "Bearer":

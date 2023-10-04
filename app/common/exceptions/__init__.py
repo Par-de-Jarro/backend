@@ -32,3 +32,13 @@ class AuthException(Exception):
 class AuthExceptionHTTPException(HTTPException):
     def __init__(self, status_code=401, detail="Auth Error") -> None:
         super().__init__(status_code, detail=detail)
+
+
+class NotAvailableSpotVacanciesException(Exception):
+    def __init__(self):
+        super().__init__(f"Selected Spot has no vacancies available.")
+
+
+class NotAvailableSpotVacanciesHTTPException(HTTPException):
+    def __init__(self, status_code=403, detail="No vacancies") -> None:
+        super().__init__(status_code, detail=detail)

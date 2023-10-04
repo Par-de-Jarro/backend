@@ -53,5 +53,3 @@ class User(Base, TableModel):
         "University",
         foreign_keys=id_university,
     )
-
-    spot_users = relationship("SpotUser", back_populates="user")
