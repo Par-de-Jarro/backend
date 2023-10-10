@@ -1,8 +1,5 @@
 from sqlalchemy import Column, ForeignKey, text
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import relationship
-
-
 from app.common.models.table_model import TableModel
 from app.db.database import Base
 
@@ -37,7 +34,3 @@ class SpotUser(Base, TableModel):
         nullable=False,
         index=True,
     )
-
-    user = relationship("User", back_populates="spot_users")
-    spot = relationship("Spot", back_populates="spot_users")
-
