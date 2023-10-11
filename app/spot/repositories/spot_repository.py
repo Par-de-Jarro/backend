@@ -9,43 +9,22 @@ from app.spot.models.spot import Spot
 
 
 class SpotFinder(BaseFinder[Spot]):
-    def filter_by_bathrooms_quantity_min(self, bathrooms_quantity_min: Optional[int]):
-        if bathrooms_quantity_min is not None:
+    def filter_by_bathrooms_quantity(self, bathrooms_quantity: Optional[int]):
+        if bathrooms_quantity is not None and bathrooms_quantity != 0:
             return SpotFinder(
                 self.base_query.filter(
                     cast(Spot.key["convenience"]["bathrooms_quantity"], Integer)
-                    >= bathrooms_quantity_min
+                    == bathrooms_quantity
                 )
             )
 
         return self
 
-    def filter_by_bathrooms_quantity_max(self, bathrooms_quantity_max: Optional[int]):
-        if bathrooms_quantity_max is not None:
+    def filter_by_rooms_quantity(self, rooms_quantity: Optional[int]):
+        if rooms_quantity is not None and rooms_quantity != 0:
             return SpotFinder(
                 self.base_query.filter(
-                    cast(Spot.key["convenience"]["bathrooms_quantity"], Integer)
-                    <= bathrooms_quantity_max
-                )
-            )
-
-        return self
-
-    def filter_by_rooms_quantity_min(self, rooms_quantity_min: Optional[int]):
-        if rooms_quantity_min is not None:
-            return SpotFinder(
-                self.base_query.filter(
-                    cast(Spot.key["convenience"]["rooms_quantity"], Integer) >= rooms_quantity_min
-                )
-            )
-
-        return self
-
-    def filter_by_rooms_quantity_max(self, rooms_quantity_max: Optional[int]):
-        if rooms_quantity_max is not None:
-            return SpotFinder(
-                self.base_query.filter(
-                    cast(Spot.key["convenience"]["rooms_quantity"], Integer) <= rooms_quantity_max
+                    cast(Spot.key["convenience"]["rooms_quantity"], Integer) == rooms_quantity
                 )
             )
 
