@@ -60,10 +60,8 @@ class SpotService(BaseService[SpotCreate, SpotUpdate, SpotView]):
         finder = SpotFinder(base_query=self._get_base_query(lat=filters.lat, long=filters.long))
 
         result = (
-            finder.filter_by_bathrooms_quantity_min(filters.bathrooms_quantity_min)
-            .filter_by_bathrooms_quantity_max(filters.bathrooms_quantity_max)
-            .filter_by_rooms_quantity_min(filters.rooms_quantity_min)
-            .filter_by_rooms_quantity_max(filters.rooms_quantity_max)
+            finder.filter_by_bathrooms_quantity(filters.bathrooms_quantity)
+            .filter_by_rooms_quantity(filters.rooms_quantity)
             .filter_by_distance_range(
                 distance_range=filters.distance_range, lat=filters.lat, long=filters.long
             )
