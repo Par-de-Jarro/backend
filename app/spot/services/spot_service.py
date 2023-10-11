@@ -99,7 +99,16 @@ class SpotService(BaseService[SpotCreate, SpotUpdate, SpotView]):
         return SpotView(
             **spot.__dict__,
             owner=UserView(
-                **spot.owner.__dict__,
+                name=spot.owner.name,
+                bio=spot.owner.bio,
+                birthdate=spot.owner.birthdate,
+                cellphone=spot.owner.cellphone,
+                course=spot.owner.course,
+                document_id=spot.owner.document_id,
+                email=spot.owner.email,
+                gender=spot.owner.gender,
+                id_user=spot.owner.id_user,
+                profile_img=spot.owner.profile_img,
                 university=UniversityView(**spot.owner.university.__dict__),
             ),
             **result,
