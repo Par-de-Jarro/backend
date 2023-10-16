@@ -1,21 +1,11 @@
-from uuid import UUID
+from sqlalchemy.orm import Session
 
 from app.common.repositories.base import BaseRepository
-from app.spot.schemas.spot_entry_request import UpdateStatus
-from app.spot.services.spot_service import SpotService
-from app.spot.services.spot_user_service import SpotUserService
+from app.spot.models.spot_entry_request import SpotEntryRequest
 
 
 class SpotEntryRequestRepository(BaseRepository):
-    spot_user: SpotUserService
-    spot: SpotService
-    spot_entry_request_schema: UpdateStatus
-
-    def check_spot_availability(self, id_spot: UUID):
-        return (
-            self.spot_user.count_users_in_spot(id_spot)
-            < self.spot.get_by_id(id_spot).personal_quota
+    def __init__(self, db: Session):
+        super(SpotEntryRequest, self).__init__(
+            SpotEntryRequest.id_spot_entry_request, model_class=SpotEntryRequest, db=db
         )
-
-    def user_spot_association(self, id_user: UUID, id_spot: UUID):
-        return self.spot_user.associate(id_user, id_spot)

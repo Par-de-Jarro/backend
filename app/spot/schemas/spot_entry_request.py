@@ -12,13 +12,18 @@ class EntryRequestStatus(Enum):
 
 
 class SpotEntryRequest(BaseModel):
+    id_user: UUID
+    id_spot: UUID
     status: EntryRequestStatus
 
 
 class SpotEntryRequestCreate(SpotEntryRequest):
-    id_user: Optional[UUID]
-    id_spot: Optional[UUID]
+    ...
 
 
-class UpdateStatus(BaseModel):
+class SpotEntryView(BaseModel):
+    ...
+
+
+class SpotEntryRequestUpdate(BaseModel):
     status: Optional[EntryRequestStatus]
