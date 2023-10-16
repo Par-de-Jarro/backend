@@ -36,7 +36,7 @@ class AuthExceptionHTTPException(HTTPException):
 
 class NotAvailableSpotVacanciesException(Exception):
     def __init__(self):
-        super().__init__(f"Selected Spot has no vacancies available.")
+        super().__init__("Selected Spot has no vacancies available.")
 
 
 class NotAvailableSpotVacanciesHTTPException(HTTPException):

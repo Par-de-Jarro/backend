@@ -7,8 +7,10 @@ from app.api import deps
 from app.common.exceptions import (
     AWSConfigException,
     AWSConfigExceptionHTTPException,
+    NotAvailableSpotVacanciesException,
+    NotAvailableSpotVacanciesHTTPException,
     RecordNotFoundException,
-    RecordNotFoundHTTPException, NotAvailableSpotVacanciesException, NotAvailableSpotVacanciesHTTPException,
+    RecordNotFoundHTTPException,
 )
 from app.spot.schemas.spot import SpotCreate, SpotSearchParams, SpotUpdate, SpotView
 from app.spot.services.spot_entry_service import SpotEntryService
@@ -24,9 +26,9 @@ validate_token = deps.token_auth()
     dependencies=[Depends(deps.hass_access)],
 )
 def create_spot(
-        spot: SpotCreate,
-        id_user: UUID = Depends(deps.get_id_user_by_auth_token),
-        service: SpotService = Depends(deps.get_spot_service),
+    spot: SpotCreate,
+    id_user: UUID = Depends(deps.get_id_user_by_auth_token),
+    service: SpotService = Depends(deps.get_spot_service),
 ):
     create = SpotCreate(**spot.dict(exclude={"id_user"}), id_user=id_user)
     return service.create(create=create)
@@ -34,15 +36,15 @@ def create_spot(
 
 @router.get("/", response_model=List[SpotView], dependencies=[Security(validate_token)])
 def get_all(
-        service: SpotService = Depends(deps.get_spot_service),
+    service: SpotService = Depends(deps.get_spot_service),
 ):
     return service.get_all()
 
 
 @router.get("/search", response_model=List[SpotView], dependencies=[Security(validate_token)])
 def search(
-        filters: SpotSearchParams = Depends(SpotSearchParams.params()),
-        service: SpotService = Depends(deps.get_spot_service),
+    filters: SpotSearchParams = Depends(SpotSearchParams.params()),
+    service: SpotService = Depends(deps.get_spot_service),
 ):
     return service.search(filters)
 
@@ -57,10 +59,10 @@ def get_by_id(id_spot: UUID, service: SpotService = Depends(deps.get_spot_servic
 
 @router.put("/{id_spot}", dependencies=[Depends(deps.hass_access)], response_model=SpotView)
 def update_spot(
-        id_spot: UUID,
-        update: SpotUpdate,
-        id_user: UUID = Depends(deps.get_id_user_by_auth_token),
-        service: SpotService = Depends(deps.get_spot_service),
+    id_spot: UUID,
+    update: SpotUpdate,
+    id_user: UUID = Depends(deps.get_id_user_by_auth_token),
+    service: SpotService = Depends(deps.get_spot_service),
 ):
     try:
         return service.update(id_spot=id_spot, update=update, id_user=id_user)
@@ -73,9 +75,9 @@ def update_spot(
     dependencies=[Depends(deps.hass_access)],
 )
 def delete_spot(
-        id_spot: UUID,
-        service: SpotService = Depends(deps.get_spot_service),
-        id_user: UUID = Depends(deps.get_id_user_by_auth_token),
+    id_spot: UUID,
+    service: SpotService = Depends(deps.get_spot_service),
+    id_user: UUID = Depends(deps.get_id_user_by_auth_token),
 ):
     try:
         service.delete(id_spot=id_spot, id_user=id_user)
@@ -85,10 +87,10 @@ def delete_spot(
 
 @router.post("/{id_spot}/upload", dependencies=[Depends(deps.hass_access)], response_model=SpotView)
 def upload_spot_images(
-        id_spot: UUID,
-        files: List[UploadFile] = File(...),
-        id_user: UUID = Depends(deps.get_id_user_by_auth_token),
-        service: SpotService = Depends(deps.get_spot_service),
+    id_spot: UUID,
+    files: List[UploadFile] = File(...),
+    id_user: UUID = Depends(deps.get_id_user_by_auth_token),
+    service: SpotService = Depends(deps.get_spot_service),
 ):
     try:
         return service.save_multiple_files(id_spot=id_spot, id_user=id_user, uploaded_files=files)
@@ -99,10 +101,10 @@ def upload_spot_images(
 
 
 @router.post("/{id_spot}/request", dependencies=[Depends(deps.hass_access)])
-def spot_entry_request(
-        id_spot: UUID,
-        service: SpotEntryService = Depends(deps.get_spot_entry_service),
-        id_user: UUID = Depends(deps.get_id_user_by_auth_token),
+def request_spot_entry(
+    id_spot: UUID,
+    service: SpotEntryService = Depends(deps.get_spot_entry_service),
+    id_user: UUID = Depends(deps.get_id_user_by_auth_token),
 ):
     try:
         return service.request_entry(id_user, id_spot)
@@ -113,11 +115,11 @@ def spot_entry_request(
 
 
 @router.post("/{id_spot}/reject", dependencies=[Depends(deps.hass_access)])
-def reject_spot_entry_request(
-        id_spot: UUID,
-        id_spot_entry_request: UUID,
-        service: SpotEntryService = Depends(deps.get_spot_entry_service),
-        id_user: UUID = Depends(deps.get_id_user_by_auth_token),
+def reject_spot_entry(
+    id_spot: UUID,
+    id_spot_entry_request: UUID,
+    service: SpotEntryService = Depends(deps.get_spot_entry_service),
+    id_user: UUID = Depends(deps.get_id_user_by_auth_token),
 ):
     try:
         return service.reject_entry(id_user, id_spot, id_spot_entry_request)
@@ -128,11 +130,11 @@ def reject_spot_entry_request(
 
 
 @router.post("/{id_spot}/accept", dependencies=[Depends(deps.hass_access)])
-def reject_spot_entry_request(
-        id_spot: UUID,
-        id_spot_entry_request: UUID,
-        service: SpotEntryService = Depends(deps.get_spot_entry_service),
-        id_user: UUID = Depends(deps.get_id_user_by_auth_token),
+def accept_spot_entry(
+    id_spot: UUID,
+    id_spot_entry_request: UUID,
+    service: SpotEntryService = Depends(deps.get_spot_entry_service),
+    id_user: UUID = Depends(deps.get_id_user_by_auth_token),
 ):
     try:
         return service.accept_entry(id_user, id_spot, id_spot_entry_request)

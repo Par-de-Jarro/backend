@@ -1,10 +1,16 @@
 from uuid import UUID
+
 from sqlalchemy.orm import Session
+
 from app.common.exceptions import AuthExceptionHTTPException, NotAvailableSpotVacanciesException
 from app.common.services.base import BaseService
 from app.spot.repositories.spot_entry_repository import SpotEntryRequestRepository
-from app.spot.schemas.spot_entry_request import SpotEntryRequest, SpotEntryRequestCreate, UpdateStatus, \
-    EntryRequestStatus
+from app.spot.schemas.spot_entry_request import (
+    EntryRequestStatus,
+    SpotEntryRequest,
+    SpotEntryRequestCreate,
+    UpdateStatus,
+)
 from app.spot.services.spot_service import SpotService
 
 
@@ -26,7 +32,9 @@ class SpotEntryService(BaseService[SpotEntryRequestCreate, SpotEntryRequest, Upd
         if spot.owner.id_user != id_user:
             raise AuthExceptionHTTPException(detail="User not allowed")
 
-    def update(self, id_user: UUID, id_spot: UUID, id_spot_entry_request: UUID, update: UpdateStatus):
+    def update(
+        self, id_user: UUID, id_spot: UUID, id_spot_entry_request: UUID, update: UpdateStatus
+    ):
         self._check_if_allowed(id_user, id_spot)
 
         return super().update(update=update, id_spot_entry_request=id_spot_entry_request)
