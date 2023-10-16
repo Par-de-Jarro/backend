@@ -1,7 +1,5 @@
-from sqlalchemy import Column, Enum, ForeignKey, Integer, Numeric, String, text
-from sqlalchemy.dialects.postgresql import ARRAY, JSONB, UUID
-from sqlalchemy.orm import relationship
-
+from sqlalchemy import Column, Enum, ForeignKey, Integer, text
+from sqlalchemy.dialects.postgresql import UUID
 from app.common.models.table_model import TableModel
 from app.db.database import Base
 from app.spot.schemas.spot_entry_request import EntryRequestStatus
