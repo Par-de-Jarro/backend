@@ -7,10 +7,25 @@ from app.api import deps
 from app.common.exceptions import (
     AWSConfigException,
     AWSConfigExceptionHTTPException,
+    NotAvailableSpotVacanciesException,
+    NotAvailableSpotVacanciesHTTPException,
     RecordNotFoundException,
     RecordNotFoundHTTPException,
+    SpotEntryRequestAlreadyAccepted,
+    SpotEntryRequestAlreadyAcceptedHTTPException,
+    SpotEntryRequestAlreadyDenied,
+    SpotEntryRequestAlreadyDeniedHTTPException,
 )
-from app.spot.schemas.spot import SpotCreate, SpotSearchParams, SpotUpdate, SpotView
+from app.spot.schemas.spot import (
+    SpotCreate,
+    SpotGetParams,
+    SpotSearchParams,
+    SpotSearchView,
+    SpotUpdate,
+    SpotView,
+)
+from app.spot.schemas.spot_entry_request import SpotEntryView
+from app.spot.services.spot_entry_service import SpotEntryService
 from app.spot.services.spot_service import SpotService
 
 router = APIRouter()
@@ -34,11 +49,12 @@ def create_spot(
 @router.get("/", response_model=List[SpotView], dependencies=[Security(validate_token)])
 def get_all(
     service: SpotService = Depends(deps.get_spot_service),
+    filters: SpotSearchParams = Depends(SpotGetParams.params()),
 ):
-    return service.get_all()
+    return service.get_all(params=filters)
 
 
-@router.get("/search", response_model=List[SpotView], dependencies=[Security(validate_token)])
+@router.get("/search", response_model=List[SpotSearchView], dependencies=[Security(validate_token)])
 def search(
     filters: SpotSearchParams = Depends(SpotSearchParams.params()),
     service: SpotService = Depends(deps.get_spot_service),
@@ -95,3 +111,61 @@ def upload_spot_images(
         raise RecordNotFoundHTTPException(detail="Spot not found")
     except AWSConfigException as e:
         raise AWSConfigExceptionHTTPException(detail=e.detail)
+
+
+@router.post(
+    "/{id_spot}/request", dependencies=[Depends(deps.hass_access)], response_model=SpotEntryView
+)
+def request_spot_entry(
+    id_spot: UUID,
+    service: SpotEntryService = Depends(deps.get_spot_entry_service),
+    id_user: UUID = Depends(deps.get_id_user_by_auth_token),
+):
+    try:
+        return service.request_entry(id_user, id_spot)
+    except RecordNotFoundException:
+        raise RecordNotFoundHTTPException(detail="Spot not found")
+    except NotAvailableSpotVacanciesException:
+        raise NotAvailableSpotVacanciesHTTPException()
+
+
+@router.post(
+    "/{id_spot_entry_request}/reject",
+    dependencies=[Depends(deps.hass_access)],
+    response_model=SpotEntryView,
+)
+def reject_spot_entry(
+    id_spot_entry_request: UUID,
+    service: SpotEntryService = Depends(deps.get_spot_entry_service),
+    id_user: UUID = Depends(deps.get_id_user_by_auth_token),
+):
+    try:
+        return service.reject_entry(id_spot_entry_request=id_spot_entry_request, id_user=id_user)
+    except RecordNotFoundException:
+        raise RecordNotFoundHTTPException(detail="Spot Entry Request not found")
+    except SpotEntryRequestAlreadyAccepted:
+        raise SpotEntryRequestAlreadyAcceptedHTTPException()
+    except SpotEntryRequestAlreadyDenied:
+        raise SpotEntryRequestAlreadyDeniedHTTPException()
+
+
+@router.post(
+    "/{id_spot_entry_request}/accept",
+    dependencies=[Depends(deps.hass_access)],
+    response_model=SpotEntryView,
+)
+def accept_spot_entry(
+    id_spot_entry_request: UUID,
+    service: SpotEntryService = Depends(deps.get_spot_entry_service),
+    id_user: UUID = Depends(deps.get_id_user_by_auth_token),
+):
+    try:
+        return service.accept_entry(id_spot_entry_request=id_spot_entry_request, id_user=id_user)
+    except RecordNotFoundException:
+        raise RecordNotFoundHTTPException(detail="Spot Entry Request not found")
+    except SpotEntryRequestAlreadyAccepted:
+        raise SpotEntryRequestAlreadyAcceptedHTTPException()
+    except SpotEntryRequestAlreadyDenied:
+        raise SpotEntryRequestAlreadyDeniedHTTPException()
+    except NotAvailableSpotVacanciesException:
+        raise NotAvailableSpotVacanciesHTTPException()

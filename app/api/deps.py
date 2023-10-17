@@ -7,6 +7,7 @@ from app.common.exceptions import AuthExceptionHTTPException
 from app.core.settings import API_TOKEN_AUTH_PASSWORD
 from app.db.database import SessionLocal
 from app.google.services.google import GoogleService
+from app.spot.services.spot_entry_service import SpotEntryService
 from app.spot.services.spot_service import SpotService
 from app.university.services.university_service import UniversityService
 from app.user.services.user_service import UserService
@@ -32,6 +33,10 @@ def get_user_service(db: Session = Depends(get_db)):
 
 def get_spot_service(db: Session = Depends(get_db)):
     return SpotService(db)
+
+
+def get_spot_entry_service(db: Session = Depends(get_db)):
+    return SpotEntryService(db)
 
 
 def get_auth_service(user_service: UserService = Depends(get_user_service)):

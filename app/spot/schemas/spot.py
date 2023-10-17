@@ -56,11 +56,16 @@ class Spot(BaseModel):
 
 class SpotView(Spot):
     id_spot: UUID
-    owner: UserView
-    distance: Optional[Decimal]
+    owner: Optional[UserView]
+    users: Optional[List[UserView]]
 
     class Config:
         orm_mode = True
+
+
+class SpotSearchView(Spot):
+    id_spot: UUID
+    distance: Optional[Decimal]
 
 
 @omit("images")
@@ -92,3 +97,7 @@ class SpotSearchParams(BaseModel, QueryParam):
     value_max: Optional[Decimal]
     value_min: Optional[Decimal]
     distance_range: Optional[Decimal] = Field(default=10)
+
+
+class SpotGetParams(BaseModel, QueryParam):
+    id_user: Optional[UUID]
