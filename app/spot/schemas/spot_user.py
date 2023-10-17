@@ -17,4 +17,5 @@ class SpotUserUpdae(BaseModel):
 
 
 class SpotUserView(SpotUser):
-    ...
+    class Config:
+        orm_mode = True

@@ -19,6 +19,9 @@ depends_on = None
 def upgrade():
     op.create_table(
         "spot_user",
+        sa.Column("updated_at", sa.DateTime(), server_default=sa.text("now()"), nullable=False),
+        sa.Column("created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=False),
+        sa.Column("deleted_at", sa.DateTime(), nullable=True),
         sa.Column(
             "id_spot_user",
             postgresql.UUID(as_uuid=True),

@@ -21,8 +21,9 @@ class SpotEntryRequestCreate(SpotEntryRequest):
     ...
 
 
-class SpotEntryView(BaseModel):
-    ...
+class SpotEntryView(SpotEntryRequest):
+    class Config:
+        orm_mode = True
 
 
 class SpotEntryRequestUpdate(BaseModel):

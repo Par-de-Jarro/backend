@@ -28,4 +28,4 @@ class UniversityView(University):
     id_university: UUID
 
     class Config:
-        from_attributes = True
+        orm_mode = True

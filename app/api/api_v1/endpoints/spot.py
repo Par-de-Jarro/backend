@@ -13,6 +13,7 @@ from app.common.exceptions import (
     RecordNotFoundHTTPException,
 )
 from app.spot.schemas.spot import SpotCreate, SpotSearchParams, SpotUpdate, SpotView
+from app.spot.schemas.spot_entry_request import SpotEntryView
 from app.spot.services.spot_entry_service import SpotEntryService
 from app.spot.services.spot_service import SpotService
 
@@ -100,7 +101,9 @@ def upload_spot_images(
         raise AWSConfigExceptionHTTPException(detail=e.detail)
 
 
-@router.post("/{id_spot}/request", dependencies=[Depends(deps.hass_access)])
+@router.post(
+    "/{id_spot}/request", dependencies=[Depends(deps.hass_access)], response_model=SpotEntryView
+)
 def request_spot_entry(
     id_spot: UUID,
     service: SpotEntryService = Depends(deps.get_spot_entry_service),
@@ -111,34 +114,38 @@ def request_spot_entry(
     except RecordNotFoundException:
         raise RecordNotFoundHTTPException(detail="Spot not found")
     except NotAvailableSpotVacanciesException:
-        raise NotAvailableSpotVacanciesHTTPException(detail="No vacancies available")
+        raise NotAvailableSpotVacanciesHTTPException()
 
 
-@router.post("/{id_spot}/reject", dependencies=[Depends(deps.hass_access)])
+@router.post(
+    "/{id_spot_entry_request}/reject",
+    dependencies=[Depends(deps.hass_access)],
+    response_model=SpotEntryView,
+)
 def reject_spot_entry(
-    id_spot: UUID,
     id_spot_entry_request: UUID,
     service: SpotEntryService = Depends(deps.get_spot_entry_service),
     id_user: UUID = Depends(deps.get_id_user_by_auth_token),
 ):
     try:
-        return service.reject_entry(id_user, id_spot, id_spot_entry_request)
+        return service.reject_entry(id_spot_entry_request=id_spot_entry_request, id_user=id_user)
     except RecordNotFoundException:
-        raise RecordNotFoundHTTPException(detail="Spot not found")
-    except AWSConfigException as e:
-        raise AWSConfigExceptionHTTPException(detail=e.detail)
+        raise RecordNotFoundHTTPException(detail="Spot Entry Request not found")
 
 
-@router.post("/{id_spot}/accept", dependencies=[Depends(deps.hass_access)])
+@router.post(
+    "/{id_spot_entry_request}/accept",
+    dependencies=[Depends(deps.hass_access)],
+    response_model=SpotEntryView,
+)
 def accept_spot_entry(
-    id_spot: UUID,
     id_spot_entry_request: UUID,
     service: SpotEntryService = Depends(deps.get_spot_entry_service),
     id_user: UUID = Depends(deps.get_id_user_by_auth_token),
 ):
     try:
-        return service.accept_entry(id_user, id_spot, id_spot_entry_request)
+        return service.accept_entry(id_spot_entry_request=id_spot_entry_request, id_user=id_user)
     except RecordNotFoundException:
-        raise RecordNotFoundHTTPException(detail="Spot not found")
-    except AWSConfigException as e:
-        raise AWSConfigExceptionHTTPException(detail=e.detail)
+        raise RecordNotFoundHTTPException(detail="Spot Entry Request not found")
+    except NotAvailableSpotVacanciesException:
+        raise NotAvailableSpotVacanciesHTTPException()
