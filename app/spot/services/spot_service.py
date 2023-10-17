@@ -59,7 +59,7 @@ class SpotService(BaseService[SpotCreate, SpotUpdate, SpotView]):
     def get_all(self, params: SpotGetParams) -> List[SpotView]:
         finder = SpotFinder(self.db.query(Spot).filter(Spot.deleted_at.is_(None)))
 
-        finder.find_by_id_user(id_user=params.id_user)
+        finder = finder.find_by_id_user(id_user=params.id_user)
 
         return finder.all()
 
