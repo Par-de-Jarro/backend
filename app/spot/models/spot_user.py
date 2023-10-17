@@ -21,7 +21,7 @@ class SpotUser(Base, TableModel):
     id_user = Column(
         ForeignKey(
             "user.id_user",
-            name="spot_user_id_user",
+            name="user_spot_id_user",
         ),
         nullable=False,
         index=True,
@@ -30,7 +30,7 @@ class SpotUser(Base, TableModel):
     id_spot = Column(
         ForeignKey(
             "spot.id_spot",
-            name="spot_user_id_spot",
+            name="spot_user_spot_id_spot",
         ),
         nullable=False,
         index=True,

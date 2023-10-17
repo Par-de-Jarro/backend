@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Enum, ForeignKey, Integer, text
+from sqlalchemy import Column, Enum, ForeignKey, text
 from sqlalchemy.dialects.postgresql import UUID
 
 from app.common.models.table_model import TableModel
@@ -21,6 +21,20 @@ class SpotEntryRequest(Base, TableModel):
 
     status = Column(Enum(EntryRequestStatus), default=EntryRequestStatus.REQUEST)
 
-    id_user = Column(Integer, ForeignKey("user.id_user"))
+    id_user = Column(
+        ForeignKey(
+            "user.id_user",
+            name="user_spot_entry_request_id_user",
+        ),
+        nullable=False,
+        index=True,
+    )
 
-    id_spot = Column(Integer, ForeignKey("spot.id_spot"))
+    id_spot = Column(
+        ForeignKey(
+            "spot.id_spot",
+            name="spot_spot_entry_request_id_spot",
+        ),
+        nullable=False,
+        index=True,
+    )
