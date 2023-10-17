@@ -63,7 +63,7 @@ class SpotEntryService(BaseService[SpotEntryRequestCreate, SpotEntryRequestUpdat
                 update=SpotEntryRequestUpdate(status=EntryRequestStatus.ACCEPTED),
             )
             self.spot_user_service.create(
-                create=SpotUserCreate(id_spot=request.id_spot, id_user=id_user)
+                create=SpotUserCreate(id_spot=request.id_spot, id_user=request.id_user)
             )
             return request
         else:

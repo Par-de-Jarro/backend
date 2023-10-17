@@ -15,6 +15,7 @@ from app.spot.repositories.spot_repository import SpotFinder, SpotRepository
 from app.spot.schemas.spot import (
     Images,
     SpotCreate,
+    SpotGetParams,
     SpotSearchParams,
     SpotSearchView,
     SpotUpdate,
@@ -54,6 +55,13 @@ class SpotService(BaseService[SpotCreate, SpotUpdate, SpotView]):
         self._check_if_allowed(id_user=id_user, id_spot=id_spot)
 
         return super().delete(id_spot=id_spot)
+
+    def get_all(self, params: SpotGetParams) -> List[SpotView]:
+        finder = SpotFinder(self.db.query(Spot).filter(Spot.deleted_at.is_(None)))
+
+        finder.find_by_id_user(id_user=params.id_user)
+
+        return finder.all()
 
     def _check_if_allowed(self, id_user: UUID, id_spot: UUID):
         spot = self.get_by_id(id_spot=id_spot)

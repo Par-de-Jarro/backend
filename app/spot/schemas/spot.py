@@ -97,3 +97,7 @@ class SpotSearchParams(BaseModel, QueryParam):
     value_max: Optional[Decimal]
     value_min: Optional[Decimal]
     distance_range: Optional[Decimal] = Field(default=10)
+
+
+class SpotGetParams(BaseModel, QueryParam):
+    id_user: Optional[UUID]

@@ -1,11 +1,13 @@
 from decimal import Decimal
 from typing import Optional
+from uuid import UUID
 
-from sqlalchemy import Boolean, Integer, cast
+from sqlalchemy import Boolean, Integer, cast, or_
 from sqlalchemy.orm import Session
 
 from app.common.repositories.base import BaseFinder, BaseRepository, haversine
 from app.spot.models.spot import Spot
+from app.spot.models.spot_user import SpotUser
 
 
 class SpotFinder(BaseFinder[Spot]):
@@ -39,6 +41,14 @@ class SpotFinder(BaseFinder[Spot]):
             )
 
         return self
+
+    def find_by_id_user(self, id_user: Optional[UUID] = None):
+        if id_user:
+            return SpotFinder(
+                self.base_query.join(SpotUser, SpotUser.id_spot == Spot.id_spot).filter(
+                    or_(Spot.id_user == id_user, SpotUser.id_user == id_user)
+                )
+            )
 
     def filter_by_value_min(self, value_min: Optional[int]):
         if value_min is not None:
