@@ -50,6 +50,8 @@ class SpotFinder(BaseFinder[Spot]):
                 )
             )
 
+        return self
+
     def filter_by_value_min(self, value_min: Optional[int]):
         if value_min is not None:
             return SpotFinder(self.base_query.filter(Spot.value >= value_min))
