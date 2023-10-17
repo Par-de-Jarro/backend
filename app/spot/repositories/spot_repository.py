@@ -52,13 +52,13 @@ class SpotFinder(BaseFinder[Spot]):
 
     def filter_by_value_min(self, value_min: Optional[int]):
         if value_min is not None:
-            return SpotFinder(self.base_query.filter(Spot.value, Integer) >= value_min)
+            return SpotFinder(self.base_query.filter(Spot.value >= value_min))
 
         return self
 
     def filter_by_value_max(self, value_max: Optional[int]):
         if value_max is not None:
-            return SpotFinder(self.base_query.filter(Spot.value, Integer >= value_max))
+            return SpotFinder(self.base_query.filter(Spot.value <= value_max))
 
         return self
 
