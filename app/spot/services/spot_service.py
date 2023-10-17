@@ -56,6 +56,9 @@ class SpotService(BaseService[SpotCreate, SpotUpdate, SpotView]):
         if spot.owner.id_user != id_user:
             raise AuthExceptionHTTPException(detail="User not allowed")
 
+    def check_spot_availability(self, id_spot: UUID) -> bool:
+        return True
+
     def search(self, filters: SpotSearchParams):
         finder = SpotFinder(base_query=self._get_base_query(lat=filters.lat, long=filters.long))
 

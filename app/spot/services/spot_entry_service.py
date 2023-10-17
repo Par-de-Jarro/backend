@@ -11,15 +11,20 @@ from app.spot.schemas.spot_entry_request import (
     SpotEntryRequestUpdate,
     SpotEntryView,
 )
+from app.spot.schemas.spot_user import SpotUserCreate
 from app.spot.services.spot_service import SpotService
+from app.spot.services.spot_user_service import SpotUserService
 
 
 class SpotEntryService(BaseService[SpotEntryRequestCreate, SpotEntryRequestUpdate, SpotEntryView]):
     repository: SpotEntryRequestRepository
     spot_service: SpotService
+    spot_user_service: SpotUserService
 
     def __init__(self, db: Session):
         super().__init__(repository=SpotEntryRequestRepository, db=db)
+        self.spot_service = SpotService(db=db)
+        self.spot_user_service = SpotUserService(db=db)
         self.db = db
 
     def _check_if_allowed(self, id_user: UUID, id_spot: UUID):
@@ -28,7 +33,7 @@ class SpotEntryService(BaseService[SpotEntryRequestCreate, SpotEntryRequestUpdat
             raise AuthExceptionHTTPException(detail="User not allowed")
 
     def request_entry(self, id_user: UUID, id_spot: UUID):
-        if self.repository.check_spot_availability(id_spot):  # TODO
+        if self.spot_service.check_spot_availability(id_spot=id_spot):
             return self.create(
                 create=SpotEntryRequestCreate(
                     id_user=id_user, id_spot=id_spot, status=EntryRequestStatus.REQUEST
@@ -40,12 +45,12 @@ class SpotEntryService(BaseService[SpotEntryRequestCreate, SpotEntryRequestUpdat
     def accept_entry(self, id_user: UUID, id_spot: UUID, id_spot_entry_request: UUID):
         self._check_if_allowed(id_user, id_spot)
 
-        if self.repository.check_spot_availability(id_spot):  # TODO
+        if self.spot_service.check_spot_availability(id_spot=id_spot):
             request = self.update(
                 id_spot_entry_request=id_spot_entry_request,
                 update=SpotEntryRequestUpdate(status=EntryRequestStatus.ACCEPTED),
             )
-            # self.repository.user_spot_association(id_user, id_spot)  # TODO
+            self.spot_user_service.create(create=SpotUserCreate(id_spot=id_spot, id_user=id_user))
             return request
         else:
             raise NotAvailableSpotVacanciesException
