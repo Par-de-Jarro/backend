@@ -12,10 +12,15 @@ from app.common.repositories.google_address_api import GoogleAddressApi
 from app.common.services.base import BaseService
 from app.spot.models.spot import Spot
 from app.spot.repositories.spot_repository import SpotFinder, SpotRepository
-from app.spot.schemas.spot import Images, SpotCreate, SpotSearchParams, SpotUpdate, SpotView
-from app.university.schemas.university import UniversityView
+from app.spot.schemas.spot import (
+    Images,
+    SpotCreate,
+    SpotSearchParams,
+    SpotSearchView,
+    SpotUpdate,
+    SpotView,
+)
 from app.user.models.user import User
-from app.user.schemas.user import UserView
 
 
 class SpotService(BaseService[SpotCreate, SpotUpdate, SpotView]):
@@ -60,7 +65,7 @@ class SpotService(BaseService[SpotCreate, SpotUpdate, SpotView]):
         spot = self.db.query(Spot).filter(Spot.id_spot == id_spot).first()
         return len(spot.users) < spot.personal_quota
 
-    def search(self, filters: SpotSearchParams):
+    def search(self, filters: SpotSearchParams) -> List[SpotSearchView]:
         finder = SpotFinder(base_query=self._get_base_query(lat=filters.lat, long=filters.long))
 
         result = (
@@ -96,23 +101,10 @@ class SpotService(BaseService[SpotCreate, SpotUpdate, SpotView]):
 
         return self.update(id_spot=id_spot, id_user=id_user, update=spot_update)
 
-    def _parse_result(self, result) -> SpotView:
+    def _parse_result(self, result) -> SpotSearchView:
         spot = result["Spot"]
-        return SpotView(
+        return SpotSearchView(
             **spot.__dict__,
-            owner=UserView(
-                name=spot.owner.name,
-                bio=spot.owner.bio,
-                birthdate=spot.owner.birthdate,
-                cellphone=spot.owner.cellphone,
-                course=spot.owner.course,
-                document_id=spot.owner.document_id,
-                email=spot.owner.email,
-                gender=spot.owner.gender,
-                id_user=spot.owner.id_user,
-                profile_img=spot.owner.profile_img,
-                university=UniversityView(**spot.owner.university.__dict__),
-            ),
             **result,
         )
 

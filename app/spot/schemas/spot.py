@@ -56,11 +56,16 @@ class Spot(BaseModel):
 
 class SpotView(Spot):
     id_spot: UUID
-    owner: UserView
-    distance: Optional[Decimal]
+    owner: Optional[UserView]
+    users: Optional[List[UserView]]
 
     class Config:
         orm_mode = True
+
+
+class SpotSearchView(Spot):
+    id_spot: UUID
+    distance: Optional[Decimal]
 
 
 @omit("images")

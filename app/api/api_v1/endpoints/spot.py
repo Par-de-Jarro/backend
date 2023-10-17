@@ -16,7 +16,7 @@ from app.common.exceptions import (
     SpotEntryRequestAlreadyDenied,
     SpotEntryRequestAlreadyDeniedHTTPException,
 )
-from app.spot.schemas.spot import SpotCreate, SpotSearchParams, SpotUpdate, SpotView
+from app.spot.schemas.spot import SpotCreate, SpotSearchParams, SpotSearchView, SpotUpdate, SpotView
 from app.spot.schemas.spot_entry_request import SpotEntryView
 from app.spot.services.spot_entry_service import SpotEntryService
 from app.spot.services.spot_service import SpotService
@@ -46,7 +46,7 @@ def get_all(
     return service.get_all()
 
 
-@router.get("/search", response_model=List[SpotView], dependencies=[Security(validate_token)])
+@router.get("/search", response_model=List[SpotSearchView], dependencies=[Security(validate_token)])
 def search(
     filters: SpotSearchParams = Depends(SpotSearchParams.params()),
     service: SpotService = Depends(deps.get_spot_service),
