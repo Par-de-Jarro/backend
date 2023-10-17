@@ -2,7 +2,12 @@ from uuid import UUID
 
 from sqlalchemy.orm import Session
 
-from app.common.exceptions import AuthExceptionHTTPException, NotAvailableSpotVacanciesException
+from app.common.exceptions import (
+    AuthExceptionHTTPException,
+    NotAvailableSpotVacanciesException,
+    SpotEntryRequestAlreadyAccepted,
+    SpotEntryRequestAlreadyDenied,
+)
 from app.common.services.base import BaseService
 from app.spot.repositories.spot_entry_repository import SpotEntryRequestRepository
 from app.spot.schemas.spot_entry_request import (
@@ -42,21 +47,38 @@ class SpotEntryService(BaseService[SpotEntryRequestCreate, SpotEntryRequestUpdat
         else:
             raise NotAvailableSpotVacanciesException
 
-    def accept_entry(self, id_user: UUID, id_spot: UUID, id_spot_entry_request: UUID):
-        self._check_if_allowed(id_user, id_spot)
+    def accept_entry(self, id_user: UUID, id_spot_entry_request: UUID):
+        request = self.get_by_id(id_spot_entry_request=id_spot_entry_request)
+        self._check_if_allowed(id_user, request.id_spot)
 
-        if self.spot_service.check_spot_availability(id_spot=id_spot):
+        if request.status == EntryRequestStatus.ACCEPTED:
+            raise SpotEntryRequestAlreadyAccepted
+
+        if request.status == EntryRequestStatus.NOT_ACCEPTED:
+            raise SpotEntryRequestAlreadyDenied
+
+        if self.spot_service.check_spot_availability(id_spot=request.id_spot):
             request = self.update(
                 id_spot_entry_request=id_spot_entry_request,
                 update=SpotEntryRequestUpdate(status=EntryRequestStatus.ACCEPTED),
             )
-            self.spot_user_service.create(create=SpotUserCreate(id_spot=id_spot, id_user=id_user))
+            self.spot_user_service.create(
+                create=SpotUserCreate(id_spot=request.id_spot, id_user=id_user)
+            )
             return request
         else:
             raise NotAvailableSpotVacanciesException
 
-    def reject_entry(self, id_user: UUID, id_spot: UUID, id_spot_entry_request: UUID):
-        self._check_if_allowed(id_user, id_spot)
+    def reject_entry(self, id_user: UUID, id_spot_entry_request: UUID):
+        request = self.get_by_id(id_spot_entry_request=id_spot_entry_request)
+        self._check_if_allowed(id_user, request.id_spot)
+
+        if request.status == EntryRequestStatus.ACCEPTED:
+            raise SpotEntryRequestAlreadyAccepted
+
+        if request.status == EntryRequestStatus.NOT_ACCEPTED:
+            raise SpotEntryRequestAlreadyDenied
+
         return self.update(
             id_spot_entry_request=id_spot_entry_request,
             update=SpotEntryRequestUpdate(status=EntryRequestStatus.NOT_ACCEPTED),

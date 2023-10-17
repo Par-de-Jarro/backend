@@ -11,6 +11,10 @@ from app.common.exceptions import (
     NotAvailableSpotVacanciesHTTPException,
     RecordNotFoundException,
     RecordNotFoundHTTPException,
+    SpotEntryRequestAlreadyAccepted,
+    SpotEntryRequestAlreadyAcceptedHTTPException,
+    SpotEntryRequestAlreadyDenied,
+    SpotEntryRequestAlreadyDeniedHTTPException,
 )
 from app.spot.schemas.spot import SpotCreate, SpotSearchParams, SpotUpdate, SpotView
 from app.spot.schemas.spot_entry_request import SpotEntryView
@@ -131,6 +135,10 @@ def reject_spot_entry(
         return service.reject_entry(id_spot_entry_request=id_spot_entry_request, id_user=id_user)
     except RecordNotFoundException:
         raise RecordNotFoundHTTPException(detail="Spot Entry Request not found")
+    except SpotEntryRequestAlreadyAccepted:
+        raise SpotEntryRequestAlreadyAcceptedHTTPException()
+    except SpotEntryRequestAlreadyDenied:
+        raise SpotEntryRequestAlreadyDeniedHTTPException()
 
 
 @router.post(
@@ -147,5 +155,9 @@ def accept_spot_entry(
         return service.accept_entry(id_spot_entry_request=id_spot_entry_request, id_user=id_user)
     except RecordNotFoundException:
         raise RecordNotFoundHTTPException(detail="Spot Entry Request not found")
+    except SpotEntryRequestAlreadyAccepted:
+        raise SpotEntryRequestAlreadyAcceptedHTTPException()
+    except SpotEntryRequestAlreadyDenied:
+        raise SpotEntryRequestAlreadyDeniedHTTPException()
     except NotAvailableSpotVacanciesException:
         raise NotAvailableSpotVacanciesHTTPException()

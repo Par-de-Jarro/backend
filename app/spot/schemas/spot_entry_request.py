@@ -22,6 +22,8 @@ class SpotEntryRequestCreate(SpotEntryRequest):
 
 
 class SpotEntryView(SpotEntryRequest):
+    id_spot_entry_request: UUID
+
     class Config:
         orm_mode = True
 

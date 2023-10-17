@@ -39,6 +39,26 @@ class NotAvailableSpotVacanciesException(Exception):
         super().__init__("Selected Spot has no vacancies available.")
 
 
+class SpotEntryRequestAlreadyAccepted(Exception):
+    def __init__(self):
+        super().__init__("Request Already Accepted")
+
+
+class SpotEntryRequestAlreadyDenied(Exception):
+    def __init__(self):
+        super().__init__("Request Already Denied")
+
+
+class SpotEntryRequestAlreadyAcceptedHTTPException(HTTPException):
+    def __init__(self, status_code=400, detail="Request Already Accepted") -> None:
+        super().__init__(status_code, detail=detail)
+
+
+class SpotEntryRequestAlreadyDeniedHTTPException(HTTPException):
+    def __init__(self, status_code=400, detail="Request Already Denied") -> None:
+        super().__init__(status_code, detail=detail)
+
+
 class NotAvailableSpotVacanciesHTTPException(HTTPException):
-    def __init__(self, status_code=403, detail="No vacancies") -> None:
+    def __init__(self, status_code=400, detail="No vacancies") -> None:
         super().__init__(status_code, detail=detail)

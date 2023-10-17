@@ -1,9 +1,10 @@
 from sqlalchemy import Column, Enum, ForeignKey, Integer, Numeric, String, text
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB, UUID
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import object_session, relationship
 
 from app.common.models.table_model import TableModel
 from app.db.database import Base
+from app.spot.models.spot_user import SpotUser
 from app.spot.schemas.spot import SpotType
 
 
@@ -63,3 +64,10 @@ class Spot(Base, TableModel):
     state = Column(String(2), nullable=False)
 
     key = Column(JSONB, nullable=False, server_default=text("'{}'"))
+
+    @property
+    def users(self):
+        association = (
+            object_session(self).query(SpotUser).filter(SpotUser.id_spot == self.id_spot).all()
+        )
+        return [aux.user for aux in association]
