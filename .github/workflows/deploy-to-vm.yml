@@ -15,6 +15,10 @@ jobs:
          TEMP=$(mktemp)
          echo "${{ secrets.SERVER_SSH_PRIVATE_KEY }}" > $TEMP
          ssh -o 'StrictHostKeyChecking no' -i $TEMP ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }} 'bash -s' < scripts/stop-containers.sh
+         ssh -o 'StrictHostKeyChecking no' -i $TEMP ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }} 'rm -rf /home/${{ secrets.SERVER_USERNAME }}/production_backend/ && \
+            mkdir /home/${{ secrets.SERVER_USERNAME }}/production_backend/'
+         
+
 
       - name: Copy files to host
         uses: nogsantos/scp-deploy@master
@@ -38,10 +42,10 @@ jobs:
                 API_TOKEN_AUTH_PASSWORD=${{ secrets.API_TOKEN_AUTH_PASSWORD }}" > $TEMP_ENV
           TEMP=$(mktemp)
           echo "${{ secrets.SERVER_SSH_PRIVATE_KEY }}" > $TEMP
-          scp -o 'StrictHostKeyChecking no' -i $TEMP $TEMP_ENV ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }}:/home/ubuntu/production_backend/.env
+          scp -o 'StrictHostKeyChecking no' -i $TEMP $TEMP_ENV ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }}:/home/${{ secrets.SERVER_USERNAME }}/production_backend/.env
 
       - name: Deploy
         run: |
          TEMP=$(mktemp)
          echo "${{ secrets.SERVER_SSH_PRIVATE_KEY }}" > $TEMP
-         ssh -o 'StrictHostKeyChecking no' -i $TEMP ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }} 'docker-compose -f /home/ubuntu/production_backend/docker-compose.yml up -d'
+         ssh -o 'StrictHostKeyChecking no' -i $TEMP ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }} 'docker-compose -f /home/${{ secrets.SERVER_USERNAME }}/production_backend/docker-compose.yml up -d'
