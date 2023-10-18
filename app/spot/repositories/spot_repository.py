@@ -45,8 +45,10 @@ class SpotFinder(BaseFinder[Spot]):
     def find_by_id_user(self, id_user: Optional[UUID] = None):
         if id_user:
             return SpotFinder(
-                self.base_query.join(SpotUser, SpotUser.id_spot == Spot.id_spot).filter(
-                    or_(Spot.id_user == id_user, SpotUser.id_user == id_user)
+                self.base_query.join(
+                    SpotUser, SpotUser.id_spot == Spot.id_spot, isouter=True
+                ).filter(
+                    or_(Spot.id_user == id_user, SpotUser.id_user == id_user),
                 )
             )
 
