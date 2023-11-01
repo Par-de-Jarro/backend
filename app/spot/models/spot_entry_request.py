@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Enum, ForeignKey, text
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import relationship
 
 from app.common.models.table_model import TableModel
 from app.db.database import Base
@@ -30,6 +31,10 @@ class SpotEntryRequest(Base, TableModel):
         index=True,
     )
 
+    user = relationship(
+        "User",
+        foreign_keys=id_user,
+    )
     id_spot = Column(
         ForeignKey(
             "spot.id_spot",
@@ -37,4 +42,9 @@ class SpotEntryRequest(Base, TableModel):
         ),
         nullable=False,
         index=True,
+    )
+
+    spot = relationship(
+        "Spot",
+        foreign_keys=id_spot,
     )

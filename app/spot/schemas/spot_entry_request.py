@@ -4,6 +4,9 @@ from uuid import UUID
 
 from pydantic import BaseModel
 
+from app.spot.schemas.spot import SpotView
+from app.user.schemas.user import UserView
+
 
 class EntryRequestStatus(Enum):
     ACCEPTED = "ACCEPTED"
@@ -23,6 +26,8 @@ class SpotEntryRequestCreate(SpotEntryRequest):
 
 class SpotEntryView(SpotEntryRequest):
     id_spot_entry_request: UUID
+    user: UserView
+    spot: SpotView
 
     class Config:
         orm_mode = True

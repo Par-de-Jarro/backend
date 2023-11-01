@@ -21,7 +21,6 @@ services:
     image: postgres:13-alpine
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-      - ./scripts/create_test_database.sh:/docker-entrypoint-initdb.d/create_test_database.sh
     env_file:
       - .env
     environment:
