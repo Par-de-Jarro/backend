@@ -71,3 +71,11 @@ class Spot(Base, TableModel):
             object_session(self).query(SpotUser).filter(SpotUser.id_spot == self.id_spot).all()
         )
         return [aux.user for aux in association]
+
+    @property
+    def is_available(self):
+        return len(self.users) < self.personal_quota
+
+    @property
+    def occupied_quota(self):
+        return len(self.users)

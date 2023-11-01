@@ -122,4 +122,5 @@ class SpotService(BaseService[SpotCreate, SpotUpdate, SpotView]):
             .add_column(haversine(Spot.lat, Spot.long, lat, long).label("distance"))
             .join(User, User.id_user == Spot.id_user)
             .filter(Spot.deleted_at.is_(None))
+            .filter(Spot.is_available)
         )
