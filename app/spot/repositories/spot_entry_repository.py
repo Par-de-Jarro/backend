@@ -37,6 +37,8 @@ class SpotEntryRequestFinder(BaseFinder[SpotEntryRequest]):
 
 
 class SpotEntryRequestRepository(BaseRepository):
+    finder: SpotEntryRequestFinder
+
     def __init__(self, db: Session):
         super(SpotEntryRequestRepository, self).__init__(
             SpotEntryRequest.id_spot_entry_request,

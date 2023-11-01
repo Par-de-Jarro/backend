@@ -2,6 +2,7 @@ from enum import Enum
 from typing import Optional
 from uuid import UUID
 
+from fastapi_qp import QueryParam
 from pydantic import BaseModel
 
 from app.spot.schemas.spot import SpotView
@@ -37,3 +38,9 @@ class SpotEntryView(SpotEntryRequest):
 
 class SpotEntryRequestUpdate(BaseModel):
     status: Optional[EntryRequestStatus]
+
+
+class SpotEntryRequestGetParams(BaseModel, QueryParam):
+    id_user: Optional[UUID]
+    id_owner: Optional[UUID]
+    id_spot: Optional[UUID]

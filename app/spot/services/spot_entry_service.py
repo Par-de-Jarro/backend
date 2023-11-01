@@ -1,3 +1,4 @@
+from typing import List
 from uuid import UUID
 
 from sqlalchemy.orm import Session
@@ -13,6 +14,7 @@ from app.spot.repositories.spot_entry_repository import SpotEntryRequestReposito
 from app.spot.schemas.spot_entry_request import (
     EntryRequestStatus,
     SpotEntryRequestCreate,
+    SpotEntryRequestGetParams,
     SpotEntryRequestUpdate,
     SpotEntryView,
 )
@@ -83,3 +85,12 @@ class SpotEntryService(BaseService[SpotEntryRequestCreate, SpotEntryRequestUpdat
             id_spot_entry_request=id_spot_entry_request,
             update=SpotEntryRequestUpdate(status=EntryRequestStatus.NOT_ACCEPTED),
         )
+
+    def get_all(self, filters: SpotEntryRequestGetParams) -> List[SpotEntryView]:
+        finder = self.repository.finder
+
+        return (
+            finder.filtered_by_id_owner(filters.id_owner)
+            .filtered_by_id_spot(filters.id_spot)
+            .filtered_by_id_user(filters.id_user)
+        ).all()
