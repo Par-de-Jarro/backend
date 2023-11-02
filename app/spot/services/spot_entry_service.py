@@ -93,4 +93,5 @@ class SpotEntryService(BaseService[SpotEntryRequestCreate, SpotEntryRequestUpdat
             finder.filtered_by_id_owner(filters.id_owner)
             .filtered_by_id_spot(filters.id_spot)
             .filtered_by_id_user(filters.id_user)
+            .filtered_by_status(filters.status)
         ).all()

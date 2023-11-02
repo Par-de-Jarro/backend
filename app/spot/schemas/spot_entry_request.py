@@ -42,3 +42,4 @@ class SpotEntryRequestGetParams(BaseModel, QueryParam):
     id_user: Optional[UUID]
     id_owner: Optional[UUID]
     id_spot: Optional[UUID]
+    status: Optional[EntryRequestStatus]
