@@ -58,6 +58,8 @@ class SpotView(Spot):
     id_spot: UUID
     owner: Optional[UserView]
     users: Optional[List[UserView]]
+    is_available: bool
+    occupied_quota: int
 
     class Config:
         orm_mode = True
@@ -66,6 +68,9 @@ class SpotView(Spot):
 class SpotSearchView(Spot):
     id_spot: UUID
     distance: Optional[Decimal]
+    is_available: bool
+    occupied_quota: int
+    users: List[UserView]
 
 
 @omit("images")

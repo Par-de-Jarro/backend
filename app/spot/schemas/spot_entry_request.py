@@ -29,8 +29,6 @@ class SpotEntryView(SpotEntryRequest):
     id_spot_entry_request: UUID
     user: UserView
     spot: SpotView
-    is_available: bool
-    occupied_quota: int
 
     class Config:
         orm_mode = True
