@@ -58,13 +58,15 @@ class SpotView(Spot):
     id_spot: UUID
     owner: Optional[UserView]
     users: Optional[List[UserView]]
+    is_available: bool
+    occupied_quota: int
 
     class Config:
         orm_mode = True
 
 
-class SpotSearchView(Spot):
-    id_spot: UUID
+class SpotSearchView(BaseModel):
+    Spot: SpotView
     distance: Optional[Decimal]
 
 

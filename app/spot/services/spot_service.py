@@ -89,7 +89,7 @@ class SpotService(BaseService[SpotCreate, SpotUpdate, SpotView]):
             .filter_by_has_elevator(filters.has_elevator)
         )
 
-        return [self._parse_result(item) for item in result.all()]
+        return result.all()
 
     def save_multiple_files(
         self, id_spot: UUID, id_user: UUID, uploaded_files: List[UploadFile]
@@ -109,17 +109,11 @@ class SpotService(BaseService[SpotCreate, SpotUpdate, SpotView]):
 
         return self.update(id_spot=id_spot, id_user=id_user, update=spot_update)
 
-    def _parse_result(self, result) -> SpotSearchView:
-        spot = result["Spot"]
-        return SpotSearchView(
-            **spot.__dict__,
-            **result,
-        )
-
     def _get_base_query(self, lat: Decimal, long: Decimal):
         return (
             self.db.query(Spot)
             .add_column(haversine(Spot.lat, Spot.long, lat, long).label("distance"))
             .join(User, User.id_user == Spot.id_user)
             .filter(Spot.deleted_at.is_(None))
+            .filter(Spot.is_available)
         )
