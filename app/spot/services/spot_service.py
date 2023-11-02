@@ -90,7 +90,6 @@ class SpotService(BaseService[SpotCreate, SpotUpdate, SpotView]):
         )
 
         return result.all()
-        return [self._parse_result(item) for item in result.all()]
 
     def save_multiple_files(
         self, id_spot: UUID, id_user: UUID, uploaded_files: List[UploadFile]
@@ -109,16 +108,6 @@ class SpotService(BaseService[SpotCreate, SpotUpdate, SpotView]):
         spot_update = SpotUpdate(images=images)
 
         return self.update(id_spot=id_spot, id_user=id_user, update=spot_update)
-
-    def _parse_result(self, result) -> SpotSearchView:
-        spot = result["Spot"]
-        from fastapi.encoders import jsonable_encoder
-
-        print(jsonable_encoder(result))
-        return SpotSearchView(
-            **spot.__dict__,
-            **result,
-        )
 
     def _get_base_query(self, lat: Decimal, long: Decimal):
         return (
