@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from app.common.repositories.base import BaseFinder, BaseRepository
 from app.spot.models.spot import Spot
 from app.spot.models.spot_entry_request import SpotEntryRequest
+from app.spot.schemas.spot_entry_request import EntryRequestStatus
 
 
 class SpotEntryRequestFinder(BaseFinder[SpotEntryRequest]):
@@ -33,6 +34,11 @@ class SpotEntryRequestFinder(BaseFinder[SpotEntryRequest]):
                 )
             )
 
+        return self
+
+    def filtered_by_status(self, status: Optional[EntryRequestStatus]):
+        if status:
+            return SpotEntryRequestFinder(self.base_query.filter(SpotEntryRequest.status == status))
         return self
 
 

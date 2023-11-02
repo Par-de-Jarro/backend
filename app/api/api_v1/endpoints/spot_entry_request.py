@@ -1,3 +1,4 @@
+from typing import List
 from uuid import UUID
 
 from fastapi import APIRouter, Depends
@@ -67,6 +68,7 @@ def accept_spot_entry(
 
 @router.get(
     "/",
+    response_model=List[SpotEntryView],
     dependencies=[Depends(deps.hass_access)],
 )
 def get_spot_entry_request(
