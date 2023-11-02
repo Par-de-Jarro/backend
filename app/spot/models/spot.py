@@ -1,6 +1,6 @@
-from sqlalchemy import Column, Enum, ForeignKey, Integer, Numeric, String, text
+from sqlalchemy import Column, Enum, ForeignKey, Integer, Numeric, String, func, select, text
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB, UUID
-from sqlalchemy.orm import object_session, relationship
+from sqlalchemy.orm import column_property, relationship
 
 from app.common.models.table_model import TableModel
 from app.db.database import Base
@@ -65,17 +65,16 @@ class Spot(Base, TableModel):
 
     key = Column(JSONB, nullable=False, server_default=text("'{}'"))
 
-    @property
-    def users(self):
-        association = (
-            object_session(self).query(SpotUser).filter(SpotUser.id_spot == self.id_spot).all()
+    users = relationship("User", secondary="spot_user")
+
+    occupied_quota = column_property(
+        select(func.count(SpotUser.id_spot)).where(
+            SpotUser.id_spot == id_spot, SpotUser.deleted_at.is_(None)
         )
-        return [aux.user for aux in association]
+    )
 
-    @property
-    def is_available(self):
-        return len(self.users) < self.personal_quota
-
-    @property
-    def occupied_quota(self):
-        return len(self.users)
+    is_available = column_property(
+        select(func.count(SpotUser.id_spot) < personal_quota).where(
+            SpotUser.id_spot == id_spot, SpotUser.deleted_at.is_(None)
+        )
+    )

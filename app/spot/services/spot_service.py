@@ -89,6 +89,7 @@ class SpotService(BaseService[SpotCreate, SpotUpdate, SpotView]):
             .filter_by_has_elevator(filters.has_elevator)
         )
 
+        return result.all()
         return [self._parse_result(item) for item in result.all()]
 
     def save_multiple_files(
@@ -111,6 +112,9 @@ class SpotService(BaseService[SpotCreate, SpotUpdate, SpotView]):
 
     def _parse_result(self, result) -> SpotSearchView:
         spot = result["Spot"]
+        from fastapi.encoders import jsonable_encoder
+
+        print(jsonable_encoder(result))
         return SpotSearchView(
             **spot.__dict__,
             **result,
