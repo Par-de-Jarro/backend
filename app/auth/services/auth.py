@@ -15,7 +15,7 @@ from app.user.services.user_service import UserService
 class AuthService:
     def __init__(self, user_service: UserService):
         self.user_service = user_service
-        self.ACCESS_TOKEN_EXPIRE_MINUTES = 30  # 30 minutes
+        self.ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7  # 7 days
         self.REFRESH_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7  # 7 days
         self.ALGORITHM = "HS256"
         self.JWT_REFRESH_SECRET_KEY = JWT_REFRESH_SECRET_KEY
