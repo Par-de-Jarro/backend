@@ -6,7 +6,7 @@ from uuid import UUID
 from pydantic import BaseModel
 
 from app.common.schemas import omit
-from app.spot.schemas.spot import SpotView
+from app.payment.schemas.spot_bill import SpotBillView
 from app.user.schemas.user import UserView
 
 
@@ -34,16 +34,11 @@ class PersonalQuotaPaymentUpdate(BaseModel):
     status: Optional[PersonalQuotaPaymentStatus]
 
 
-@omit("users", "occupied_quota", "owner")
-class SimplifiedSpotView(SpotView):
-    ...
-
-
 @omit("university")
 class SimplifiedUserView(UserView):
     ...
 
 
 class PersonalQuotaPaymentView(PersonalQuotaPayment):
-    spot: SimplifiedSpotView
     user: SimplifiedUserView
+    spot_bill: SpotBillView
