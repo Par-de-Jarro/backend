@@ -3,7 +3,7 @@ from enum import Enum
 from typing import List, Optional
 from uuid import UUID
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from app.common.schemas import omit
 from app.payment.schemas.spot_bill import SpotBillView
@@ -20,7 +20,7 @@ class PersonalQuotaPayment(BaseModel):
     id_spot_bill: UUID
     id_user: UUID
     value: Decimal
-    images: List[str]
+    images: Optional[List[str]] = Field(default=[])
     status: PersonalQuotaPaymentStatus
 
 
@@ -32,6 +32,7 @@ class PersonalQuotaPaymentCreate(PersonalQuotaPayment):
 class PersonalQuotaPaymentUpdate(BaseModel):
     value: Optional[Decimal]
     status: Optional[PersonalQuotaPaymentStatus]
+    images: Optional[List[str]]
 
 
 @omit("university")
