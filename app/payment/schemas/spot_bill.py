@@ -27,6 +27,7 @@ class SpotBillCreate(SpotBill):
 class SpotBillUpdate(SpotBill):
     name: Optional[str]
     description: Optional[str]
+    images: List[str]
 
 
 @omit("users", "occupied_quota", "owner")
