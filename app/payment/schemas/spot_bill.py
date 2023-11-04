@@ -44,7 +44,6 @@ class SpotBillView(SpotBill):
 
 
 class SpotBillGetParams(BaseModel, QueryParam):
-    id_user: Optional[UUID]
     id_owner: Optional[UUID]
     id_spot: Optional[UUID]
     reference_date_start: Optional[date]

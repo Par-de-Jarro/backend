@@ -69,7 +69,6 @@ class SpotBillService(BaseService[SpotBillCreate, SpotBillUpdate, SpotBillView])
         return (
             finder.filtered_by_id_owner(id_owner=filters.id_owner)
             .filtered_by_id_spot(id_spot=filters.id_spot)
-            .filtered_by_id_user(id_user=filters.id_user)
             .filtered_by_period(
                 reference_date_start=filters.reference_date_start,
                 reference_date_end=filters.reference_date_end,

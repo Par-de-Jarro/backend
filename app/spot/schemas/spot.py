@@ -56,6 +56,7 @@ class Spot(BaseModel):
 
 class SpotView(Spot):
     id_spot: UUID
+    id_user: UUID
     owner: Optional[UserView]
     users: Optional[List[UserView]]
     is_available: Optional[bool]

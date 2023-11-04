@@ -10,12 +10,6 @@ from app.spot.models.spot import Spot
 
 
 class SpotBillFinder(BaseFinder[SpotBill]):
-    def filtered_by_id_user(self, id_user: Optional[UUID]):
-        if id_user:
-            return SpotBillFinder(self.base_query.filter(SpotBill.id_user == id_user))
-
-        return self
-
     def filtered_by_id_spot(self, id_spot: Optional[UUID]):
         if id_spot:
             return SpotBillFinder(self.base_query.filter(SpotBill.id_spot == id_spot))
