@@ -1,7 +1,7 @@
 from typing import List
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, File, UploadFile
+from fastapi import APIRouter, Depends, File, Security, UploadFile
 
 from app.api import deps
 from app.common.exceptions import (
@@ -52,11 +52,7 @@ def upload_spot_bill_images(
         raise AWSConfigExceptionHTTPException(detail=e.detail)
 
 
-@router.get(
-    "/",
-    response_model=List[SpotBillView],
-    dependencies=[Depends(deps.hass_access)],
-)
+@router.get("/", response_model=List[SpotBillView], dependencies=[Security(validate_token)])
 def get_spot_bills(
     service: SpotBillService = Depends(deps.get_spot_bill_service),
     filters: SpotBillGetParams = Depends(SpotBillGetParams.params()),
@@ -64,7 +60,7 @@ def get_spot_bills(
     return service.get_all(filters=filters)
 
 
-@router.get("/{id_spot_bill}", response_model=SpotBillView)
+@router.get("/{id_spot_bill}", response_model=SpotBillView, dependencies=[Security(validate_token)])
 def get_spot_bill_by_id(
     id_spot_bill: UUID,
     service: SpotBillService = Depends(deps.get_spot_bill_service),
