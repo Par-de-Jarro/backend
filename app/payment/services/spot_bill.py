@@ -8,7 +8,12 @@ from app.common.exceptions import AuthExceptionHTTPException, RecordNotFoundExce
 from app.common.repositories.aws_repository import AWSRepository
 from app.common.services.base import BaseService
 from app.payment.repositories.spot_bill import SpotBillRepository
-from app.payment.schemas.spot_bill import SpotBillCreate, SpotBillUpdate, SpotBillView
+from app.payment.schemas.spot_bill import (
+    SpotBillCreate,
+    SpotBillGetParams,
+    SpotBillUpdate,
+    SpotBillView,
+)
 from app.spot.services.spot_service import SpotService
 
 
@@ -57,3 +62,16 @@ class SpotBillService(BaseService[SpotBillCreate, SpotBillUpdate, SpotBillView])
         spot_bill_update = SpotBillUpdate(images=images)
 
         return self.update(id_spot_bill=id_spot_bill, id_user=id_user, update=spot_bill_update)
+
+    def get_all(self, filters: SpotBillGetParams) -> List[SpotBillView]:
+        finder = self.repository.finder
+
+        return (
+            finder.filtered_by_id_owner(id_owner=filters.id_owner)
+            .filtered_by_id_spot(id_spot=filters.id_spot)
+            .filtered_by_id_user(id_user=filters.id_user)
+            .filtered_by_period(
+                reference_date_start=filters.reference_date_start,
+                reference_date_end=filters.reference_date_end,
+            )
+        ).all()

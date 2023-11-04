@@ -10,7 +10,7 @@ from app.common.exceptions import (
     RecordNotFoundException,
     RecordNotFoundHTTPException,
 )
-from app.payment.schemas.spot_bill import SpotBillCreate, SpotBillView
+from app.payment.schemas.spot_bill import SpotBillCreate, SpotBillGetParams, SpotBillView
 from app.payment.services.spot_bill import SpotBillService
 
 router = APIRouter()
@@ -50,3 +50,23 @@ def upload_spot_bill_images(
         raise RecordNotFoundHTTPException(detail="Spot Bill not found")
     except AWSConfigException as e:
         raise AWSConfigExceptionHTTPException(detail=e.detail)
+
+
+@router.get(
+    "/",
+    response_model=List[SpotBillView],
+    dependencies=[Depends(deps.hass_access)],
+)
+def get_spot_bills(
+    service: SpotBillService = Depends(deps.get_spot_bill_service),
+    filters: SpotBillGetParams = Depends(SpotBillGetParams.params()),
+):
+    return service.get_all(filters=filters)
+
+
+@router.get("/{id_spot_bill}", response_model=SpotBillView)
+def get_spot_bill_by_id(
+    id_spot_bill: UUID,
+    service: SpotBillService = Depends(deps.get_spot_bill_service),
+):
+    return service.get_by_id(id_spot_bill=id_spot_bill)

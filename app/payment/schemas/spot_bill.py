@@ -3,6 +3,7 @@ from decimal import Decimal
 from typing import List, Optional
 from uuid import UUID
 
+from fastapi_qp import QueryParam
 from pydantic import BaseModel
 
 from app.common.schemas import omit
@@ -40,3 +41,11 @@ class SpotBillView(SpotBill):
 
     class Config:
         orm_mode = True
+
+
+class SpotBillGetParams(BaseModel, QueryParam):
+    id_user: Optional[UUID]
+    id_owner: Optional[UUID]
+    id_spot: Optional[UUID]
+    reference_date_start: Optional[date]
+    reference_date_end: Optional[date]
