@@ -44,7 +44,7 @@ class SpotBillService(BaseService[SpotBillCreate, SpotBillUpdate, SpotBillView])
 
     def save_multiple_files(
         self, id_spot_bill: UUID, id_user: UUID, uploaded_files: List[UploadFile]
-    ) -> List[str]:
+    ) -> SpotBillView:
         self._check_if_allowed(id_user=id_user, id_spot_bill=id_spot_bill)
         spot_bill = self.get_by_id(id_spot_bill=id_spot_bill)
 
@@ -56,4 +56,4 @@ class SpotBillService(BaseService[SpotBillCreate, SpotBillUpdate, SpotBillView])
 
         spot_bill_update = SpotBillUpdate(images=images)
 
-        return self.update(id_spot_bill=id_spot_bill, update=spot_bill_update)
+        return self.update(id_spot_bill=id_spot_bill, id_user=id_user, update=spot_bill_update)

@@ -24,7 +24,7 @@ class SpotBillCreate(SpotBill):
     ...
 
 
-class SpotBillUpdate(SpotBill):
+class SpotBillUpdate(BaseModel):
     name: Optional[str]
     description: Optional[str]
     images: List[str]
