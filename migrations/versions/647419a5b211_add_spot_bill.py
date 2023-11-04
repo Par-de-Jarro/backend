@@ -32,7 +32,7 @@ def upgrade():
         sa.Column("value", sa.Numeric(), nullable=False),
         sa.Column("reference_date", sa.Date(), nullable=False),
         sa.Column("images", postgresql.ARRAY(sa.String()), nullable=True),
-        sa.Column("name", sa.String(length=500), nullable=True),
+        sa.Column("name", sa.String(length=500), nullable=False),
         sa.Column("description", sa.String(length=500), nullable=True),
         sa.ForeignKeyConstraint(["id_spot"], ["spot.id_spot"], name="spot_bill_id_spot_fk"),
         sa.PrimaryKeyConstraint("id_spot_bill"),
