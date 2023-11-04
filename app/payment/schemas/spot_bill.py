@@ -14,7 +14,7 @@ class SpotBill(BaseModel):
     id_spot: UUID
     value: Decimal
     reference_date: date
-    images: List[str]
+    images: Optional[List[str]] = []
     name: str
     description: Optional[str]
 
@@ -30,10 +30,13 @@ class SpotBillUpdate(SpotBill):
     images: List[str]
 
 
-@omit("users", "occupied_quota", "owner")
+@omit("users", "occupied_quota", "owner", "is_available")
 class SimplifiedSpotView(SpotView):
     ...
 
 
 class SpotBillView(SpotBill):
     spot: SimplifiedSpotView
+
+    class Config:
+        orm_mode = True

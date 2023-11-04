@@ -37,6 +37,11 @@ class SpotBillService(BaseService[SpotBillCreate, SpotBillUpdate, SpotBillView])
 
         return super().update(update, id_spot_bill=id_spot_bill)
 
+    def create(self, id_user: UUID, create: SpotBillCreate) -> SpotBillView:
+        self.spot_service._check_if_allowed(id_user=id_user, id_spot=create.id_spot)
+
+        return super().create(create)
+
     def save_multiple_files(
         self, id_spot_bill: UUID, id_user: UUID, uploaded_files: List[UploadFile]
     ) -> List[str]:

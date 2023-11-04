@@ -65,16 +65,16 @@ class Spot(Base, TableModel):
 
     key = Column(JSONB, nullable=False, server_default=text("'{}'"))
 
-    users = relationship("User", secondary="spot_user")
+    users = relationship("User", secondary="spot_user", lazy="joined")
 
     occupied_quota = column_property(
-        select(func.count(SpotUser.id_spot)).where(
-            SpotUser.id_spot == id_spot, SpotUser.deleted_at.is_(None)
-        )
+        select(func.count(SpotUser.id_spot))
+        .where(SpotUser.id_spot == id_spot, SpotUser.deleted_at.is_(None))
+        .scalar_subquery(),
     )
 
     is_available = column_property(
-        select(func.count(SpotUser.id_spot) < personal_quota).where(
-            SpotUser.id_spot == id_spot, SpotUser.deleted_at.is_(None)
-        )
+        select(func.count(SpotUser.id_spot) < personal_quota)
+        .where(SpotUser.id_spot == id_spot, SpotUser.deleted_at.is_(None))
+        .scalar_subquery()
     )
