@@ -45,7 +45,7 @@ def upload_personal_quota_payment_images(
 
 
 @router.post(
-    "{id_personal_quota_payment}/pay",
+    "/{id_personal_quota_payment}/pay",
     response_model=PersonalQuotaPaymentView,
     dependencies=[Depends(deps.hass_access)],
 )
