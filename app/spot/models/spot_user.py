@@ -37,6 +37,12 @@ class SpotUser(Base, TableModel):
         index=True,
     )
 
-    user = relationship("User", foreign_keys=id_user, lazy="joined")
+    user = relationship(
+        "User",
+        foreign_keys=id_user,
+    )
 
-    spot = relationship("Spot", foreign_keys=id_spot, lazy="joined")
+    spot = relationship(
+        "Spot",
+        foreign_keys=id_spot,
+    )

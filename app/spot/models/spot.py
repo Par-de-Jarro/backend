@@ -30,7 +30,10 @@ class Spot(Base, TableModel):
         index=True,
     )
 
-    owner = relationship("User", foreign_keys=id_user, lazy="joined")
+    owner = relationship(
+        "User",
+        foreign_keys=id_user,
+    )
 
     name = Column(String(50), nullable=False)
 
@@ -62,7 +65,10 @@ class Spot(Base, TableModel):
 
     key = Column(JSONB, nullable=False, server_default=text("'{}'"))
 
-    users = relationship("User", secondary="spot_user", lazy="joined")
+    users = relationship(
+        "User",
+        secondary="spot_user",
+    )
 
     occupied_quota = column_property(
         select(func.count(SpotUser.id_spot))

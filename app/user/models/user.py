@@ -49,4 +49,7 @@ class User(Base, TableModel):
         index=True,
     )
 
-    university = relationship("University", foreign_keys=id_university, lazy="joined")
+    university = relationship(
+        "University",
+        foreign_keys=id_university,
+    )

@@ -29,7 +29,10 @@ class PersonalQuotaPayment(Base, TableModel):
         index=True,
     )
 
-    spot_bill = relationship("SpotBill", foreign_keys=id_spot_bill, lazy="joined")
+    spot_bill = relationship(
+        "SpotBill",
+        foreign_keys=id_spot_bill,
+    )
 
     id_user = Column(
         ForeignKey(
@@ -40,7 +43,10 @@ class PersonalQuotaPayment(Base, TableModel):
         index=True,
     )
 
-    user = relationship("User", foreign_keys=id_user, lazy="joined")
+    user = relationship(
+        "User",
+        foreign_keys=id_user,
+    )
 
     value = Column(Numeric, nullable=False)
 

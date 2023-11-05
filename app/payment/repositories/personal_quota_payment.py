@@ -30,7 +30,7 @@ class PersonalQuotaPaymentFinder(BaseFinder[PersonalQuotaPayment]):
         if reference_date_start and reference_date_end:
             return PersonalQuotaPaymentFinder(
                 self.base_query.join(
-                    PersonalQuotaPayment.id_spot_bill == SpotBill.id_spot_bill
+                    SpotBill, PersonalQuotaPayment.id_spot_bill == SpotBill.id_spot_bill
                 ).filter(SpotBill.reference_date.between(reference_date_start, reference_date_end))
             )
 
