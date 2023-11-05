@@ -12,6 +12,7 @@ from app.common.exceptions import (
 )
 from app.payment.schemas.personal_quota_payment import (
     GeneratePersonalQuotaPaymentConfig,
+    PersonalQuotaPaymentGetParams,
     PersonalQuotaPaymentView,
 )
 from app.payment.services.personal_quota_payment import PersonalQuotaPaymentService
@@ -67,3 +68,13 @@ def generate_personal_quota_payemnt(
     service: PersonalQuotaPaymentService = Depends(deps.get_personal_quota_payment_service),
 ):
     return service.generate_personal_quota_payment(config=config, id_user=id_user)
+
+
+@router.get(
+    "/", response_model=List[PersonalQuotaPaymentView], dependencies=[Security(validate_token)]
+)
+def get_personal_quota_payment(
+    service: PersonalQuotaPaymentService = Depends(deps.get_personal_quota_payment_service),
+    filters: PersonalQuotaPaymentGetParams = Depends(PersonalQuotaPaymentGetParams.params()),
+):
+    return service.get_all(filters=filters)

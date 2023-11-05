@@ -11,6 +11,7 @@ from app.payment.repositories.personal_quota_payment import PersonalQuotaPayment
 from app.payment.schemas.personal_quota_payment import (
     GeneratePersonalQuotaPaymentConfig,
     PersonalQuotaPaymentCreate,
+    PersonalQuotaPaymentGetParams,
     PersonalQuotaPaymentStatus,
     PersonalQuotaPaymentUpdate,
     PersonalQuotaPaymentView,
@@ -119,3 +120,12 @@ class PersonalQuotaPaymentService(
                 created_quotas.append(quota)
 
         return created_quotas
+
+    def get_all(self, filters: PersonalQuotaPaymentGetParams) -> List[PersonalQuotaPaymentView]:
+        finder = self.repository.finder
+
+        return (
+            finder.filtered_by_id_user(id_user=filters.id_user).filtered_by_id_spot_bill(
+                id_spot_bill=filters.id_spot_bill
+            )
+        ).all()
