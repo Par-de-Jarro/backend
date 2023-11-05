@@ -47,7 +47,7 @@ def upload_personal_quota_payment_images(
 @router.post(
     "{id_personal_quota_payment}/pay",
     response_model=PersonalQuotaPaymentView,
-    dependencies=[Security(validate_token)],
+    dependencies=[Depends(deps.hass_access)],
 )
 def pay_personal_quota_payment(
     id_personal_quota_payment: UUID,

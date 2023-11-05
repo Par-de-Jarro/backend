@@ -41,7 +41,8 @@ class PersonalQuotaPaymentService(
         if not (personal_quota_payment):
             raise RecordNotFoundException()
 
-        if personal_quota_payment.id_user != id_user or owner != id_user:
+        print(personal_quota_payment.id_user, owner)
+        if personal_quota_payment.id_user != id_user and owner != id_user:
             raise AuthExceptionHTTPException(detail="User not allowed")
 
     def create(self, id_user: UUID, create: PersonalQuotaPaymentCreate) -> PersonalQuotaPaymentView:
@@ -74,9 +75,7 @@ class PersonalQuotaPaymentService(
         id_personal_quota_payment: UUID,
         update: PersonalQuotaPaymentUpdate,
     ) -> PersonalQuotaPaymentView:
-        self._check_if_allowed(
-            id_user=id_user, id_personal_quota_payment=id_personal_quota_payment, update=update
-        )
+        self._check_if_allowed(id_user=id_user, id_personal_quota_payment=id_personal_quota_payment)
         return super().update(
             id_user=id_user, id_personal_quota_payment=id_personal_quota_payment, update=update
         )
