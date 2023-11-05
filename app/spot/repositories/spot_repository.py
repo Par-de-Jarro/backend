@@ -7,7 +7,6 @@ from sqlalchemy.orm import Session
 
 from app.common.repositories.base import BaseFinder, BaseRepository, haversine
 from app.spot.models.spot import Spot
-from app.spot.models.spot_user import SpotUser
 
 
 class SpotFinder(BaseFinder[Spot]):
@@ -45,10 +44,8 @@ class SpotFinder(BaseFinder[Spot]):
     def find_by_id_user(self, id_user: Optional[UUID] = None):
         if id_user:
             return SpotFinder(
-                self.base_query.join(
-                    SpotUser, SpotUser.id_spot == Spot.id_spot, isouter=True
-                ).filter(
-                    or_(Spot.id_user == id_user, SpotUser.id_user == id_user),
+                self.base_query.filter(
+                    or_(Spot.id_user == id_user, Spot.users.any(id_user=id_user)),
                 )
             )
 
