@@ -7,6 +7,7 @@ from app.common.exceptions import AuthExceptionHTTPException
 from app.core.settings import API_TOKEN_AUTH_PASSWORD
 from app.db.database import SessionLocal
 from app.google.services.google import GoogleService
+from app.payment.services.personal_quota_payment import PersonalQuotaPaymentService
 from app.payment.services.spot_bill import SpotBillService
 from app.spot.services.spot_entry_service import SpotEntryService
 from app.spot.services.spot_service import SpotService
@@ -38,6 +39,10 @@ def get_spot_service(db: Session = Depends(get_db)):
 
 def get_spot_bill_service(db: Session = Depends(get_db)):
     return SpotBillService(db)
+
+
+def get_personal_quota_payment_service(db: Session = Depends(get_db)):
+    return PersonalQuotaPaymentService(db=db)
 
 
 def get_spot_entry_service(db: Session = Depends(get_db)):

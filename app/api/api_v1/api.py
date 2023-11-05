@@ -2,6 +2,7 @@ from fastapi import APIRouter
 
 from app.api.api_v1.endpoints import (
     google,
+    personal_quota_payment,
     session,
     spot,
     spot_bill,
@@ -22,3 +23,6 @@ api_router.include_router(
 )
 
 api_router.include_router(spot_bill.router, prefix="/spot_bill", tags=["spot_bill"])
+api_router.include_router(
+    personal_quota_payment.router, prefix="/personal_quota_payment", tags=["personal_quota_payment"]
+)

@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Enum, ForeignKey, Numeric, String, text
-from sqlalchemy.dialects.postgresql import ARRAY, UUID
+from sqlalchemy.dialects.postgresql import ARRAY, JSONB, UUID
 from sqlalchemy.orm import relationship
 
 from app.common.models.table_model import TableModel
@@ -55,3 +55,5 @@ class PersonalQuotaPayment(Base, TableModel):
     status = Column(
         Enum(PersonalQuotaPaymentStatus), nullable=False, server_default="WAITING_FOR_PAYMENT"
     )
+
+    meta = Column(JSONB, nullable=False, server_default=text("'{}'"))
