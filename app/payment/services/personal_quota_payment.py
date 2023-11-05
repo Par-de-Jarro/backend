@@ -124,7 +124,10 @@ class PersonalQuotaPaymentService(
         finder = self.repository.finder
 
         return (
-            finder.filtered_by_id_user(id_user=filters.id_user).filtered_by_id_spot_bill(
-                id_spot_bill=filters.id_spot_bill
+            finder.filtered_by_id_user(id_user=filters.id_user)
+            .filtered_by_id_spot_bill(id_spot_bill=filters.id_spot_bill)
+            .filtered_by_period(
+                reference_date_start=filters.reference_date_start,
+                reference_date_end=filters.reference_date_end,
             )
         ).all()
