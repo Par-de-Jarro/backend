@@ -18,7 +18,6 @@ class SpotBill(BaseModel):
     images: Optional[List[str]] = []
     name: str
     description: Optional[str]
-    meta: dict
 
 
 @omit("id_spot_bill", "images")

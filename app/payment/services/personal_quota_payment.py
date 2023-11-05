@@ -9,11 +9,13 @@ from app.common.repositories.aws_repository import AWSRepository
 from app.common.services.base import BaseService
 from app.payment.repositories.personal_quota_payment import PersonalQuotaPaymentRepository
 from app.payment.schemas.personal_quota_payment import (
+    GeneratePersonalQuotaPaymentConfig,
     PersonalQuotaPaymentCreate,
     PersonalQuotaPaymentStatus,
     PersonalQuotaPaymentUpdate,
     PersonalQuotaPaymentView,
 )
+from app.payment.schemas.spot_bill import SpotBillGetParams
 from app.payment.services.spot_bill import SpotBillService
 from app.spot.services.spot_service import SpotService
 
@@ -84,3 +86,36 @@ class PersonalQuotaPaymentService(
         return self.update(
             id_user=id_user, id_personal_quota_payment=id_personal_quota_payment, update=update
         )
+
+    def generate_personal_quota_payment(
+        self, id_user: UUID, config: GeneratePersonalQuotaPaymentConfig
+    ) -> List[PersonalQuotaPaymentView]:
+        self.spot_service._check_if_allowed(id_user=id_user, id_spot=config.id_spot)
+        bills = self.spot_bill_service.get_all(
+            filters=SpotBillGetParams(
+                id_spot=config.id_spot,
+                reference_date_start=config.reference_date_start,
+                reference_date_end=config.reference_date_end,
+            )
+        )
+        spot = self.spot_service.get_by_id(id_spot=config.id_spot)
+        users = spot.users
+
+        created_quotas = []
+        for bill in bills:
+            divided_bill = bill.value / len(users)
+
+            for user in users:
+                create = PersonalQuotaPaymentCreate(
+                    id_spot_bill=bill.id_spot_bill,
+                    id_user=user.id_user,
+                    value=divided_bill,
+                    status=PersonalQuotaPaymentStatus.WAITING_FOR_PAYMENT,
+                    images=[],
+                    meta={"config": config.dict()},
+                )
+
+                quota = self.create(id_user=id_user, create=create)
+                created_quotas.append(quota)
+
+        return created_quotas

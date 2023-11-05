@@ -30,10 +30,7 @@ class Spot(Base, TableModel):
         index=True,
     )
 
-    owner = relationship(
-        "User",
-        foreign_keys=id_user,
-    )
+    owner = relationship("User", foreign_keys=id_user, lazy="joined")
 
     name = Column(String(50), nullable=False)
 

@@ -1,3 +1,4 @@
+from datetime import date
 from decimal import Decimal
 from enum import Enum
 from typing import List, Optional
@@ -22,6 +23,7 @@ class PersonalQuotaPayment(BaseModel):
     value: Decimal
     images: Optional[List[str]] = Field(default=[])
     status: PersonalQuotaPaymentStatus
+    meta: dict
 
 
 @omit("images", "id_personal_quota_payment")
@@ -43,3 +45,12 @@ class SimplifiedUserView(UserView):
 class PersonalQuotaPaymentView(PersonalQuotaPayment):
     user: SimplifiedUserView
     spot_bill: SpotBillView
+
+    class Config:
+        orm_mode = True
+
+
+class GeneratePersonalQuotaPaymentConfig(BaseModel):
+    id_spot: UUID
+    reference_date_start: date
+    reference_date_end: date

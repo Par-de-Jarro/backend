@@ -29,10 +29,7 @@ class SpotBill(Base, TableModel):
         index=True,
     )
 
-    spot = relationship(
-        "Spot",
-        foreign_keys=id_spot,
-    )
+    spot = relationship("Spot", foreign_keys=id_spot, lazy="joined")
 
     value = Column(Numeric, nullable=False)
 

@@ -31,10 +31,7 @@ class SpotEntryRequest(Base, TableModel):
         index=True,
     )
 
-    user = relationship(
-        "User",
-        foreign_keys=id_user,
-    )
+    user = relationship("User", foreign_keys=id_user, lazy="joined")
     id_spot = Column(
         ForeignKey(
             "spot.id_spot",
@@ -44,7 +41,4 @@ class SpotEntryRequest(Base, TableModel):
         index=True,
     )
 
-    spot = relationship(
-        "Spot",
-        foreign_keys=id_spot,
-    )
+    spot = relationship("Spot", foreign_keys=id_spot, lazy="joined")
