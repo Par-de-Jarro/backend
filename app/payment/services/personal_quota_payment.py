@@ -4,7 +4,7 @@ from uuid import UUID
 from fastapi import UploadFile
 from sqlalchemy.orm import Session
 
-from app.common.exceptions import AuthExceptionHTTPException, RecordNotFoundException
+from app.common.exceptions import AuthExceptionHTTPException, RecordNotFoundException, SpotHasNoOccupantsException
 from app.common.repositories.aws_repository import AWSRepository
 from app.common.services.base import BaseService
 from app.payment.repositories.personal_quota_payment import PersonalQuotaPaymentRepository
@@ -100,6 +100,9 @@ class PersonalQuotaPaymentService(
         )
         spot = self.spot_service.get_by_id(id_spot=config.id_spot)
         users = spot.users
+
+        if len(users) < 1:
+            raise SpotHasNoOccupantsException()
 
         created_quotas = []
         for bill in bills:
