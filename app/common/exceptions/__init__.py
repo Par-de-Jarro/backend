@@ -63,6 +63,7 @@ class NotAvailableSpotVacanciesHTTPException(HTTPException):
     def __init__(self, status_code=400, detail="No vacancies") -> None:
         super().__init__(status_code, detail=detail)
 
+
 class SpotHasNoOccupantsException(HTTPException):
     def __init__(self, status_code=400, detail="This spot has no associated occupants") -> None:
         super().__init__(status_code, detail=detail)
