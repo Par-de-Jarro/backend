@@ -90,6 +90,17 @@ class SpotEntryService(BaseService[SpotEntryRequestCreate, SpotEntryRequestUpdat
             update=SpotEntryRequestUpdate(status=EntryRequestStatus.NOT_ACCEPTED),
         )
 
+    def cancel_entry_request(self, id_user: UUID, id_spot_entry_request: UUID):
+        request = self.get_by_id(id_spot_entry_request=id_spot_entry_request)
+
+        if id_user != request.id_user:
+            raise AuthExceptionHTTPException(detail="User not allowed")
+
+        return self.update(
+            id_spot_entry_request=id_spot_entry_request,
+            update=SpotEntryRequestUpdate(status=EntryRequestStatus.CANCELLED),
+        )
+
     def get_all(self, filters: SpotEntryRequestGetParams) -> List[SpotEntryView]:
         finder = self.repository.finder
 
