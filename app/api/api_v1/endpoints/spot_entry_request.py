@@ -45,6 +45,28 @@ def reject_spot_entry(
 
 
 @router.post(
+    "/{id_spot_entry_request}/cancel",
+    dependencies=[Depends(deps.hass_access)],
+    response_model=SpotEntryView,
+)
+def cancel_spot_entry(
+    id_spot_entry_request: UUID,
+    service: SpotEntryService = Depends(deps.get_spot_entry_service),
+    id_user: UUID = Depends(deps.get_id_user_by_auth_token),
+):
+    try:
+        return service.cancel_entry_request(
+            id_spot_entry_request=id_spot_entry_request, id_user=id_user
+        )
+    except RecordNotFoundException:
+        raise RecordNotFoundHTTPException(detail="Spot Entry Request not found")
+    except SpotEntryRequestAlreadyAccepted:
+        raise SpotEntryRequestAlreadyAcceptedHTTPException()
+    except SpotEntryRequestAlreadyDenied:
+        raise SpotEntryRequestAlreadyDeniedHTTPException
+
+
+@router.post(
     "/{id_spot_entry_request}/accept",
     dependencies=[Depends(deps.hass_access)],
     response_model=SpotEntryView,

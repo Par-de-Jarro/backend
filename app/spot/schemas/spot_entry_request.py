@@ -13,6 +13,7 @@ class EntryRequestStatus(Enum):
     ACCEPTED = "ACCEPTED"
     NOT_ACCEPTED = "NOT_ACCEPTED"
     REQUEST = "REQUEST"
+    CANCELLED = "CANCELLED"
 
 
 class SpotEntryRequest(BaseModel):
