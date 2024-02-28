@@ -41,7 +41,7 @@ class SpotEntryService(BaseService[SpotEntryRequestCreate, SpotEntryRequestUpdat
             raise AuthExceptionHTTPException(detail="User not allowed")
 
     def request_entry(self, id_user: UUID, id_spot: UUID):
-        if self.checkIfUserAlreadyRequestedEntryInSpot(id_spot=id_spot, id_user=id_user):
+        if self.check_if_user_already_requested_entry_in_spot(id_spot=id_spot, id_user=id_user):
             raise UserAlreadyRequestedEntryException
 
         if self.spot_service.check_spot_availability(id_spot=id_spot):
@@ -111,9 +111,13 @@ class SpotEntryService(BaseService[SpotEntryRequestCreate, SpotEntryRequestUpdat
             .filtered_by_status(filters.status)
         ).all()
 
-    def checkIfUserAlreadyRequestedEntryInSpot(self, id_user: UUID, id_spot: UUID) -> bool:
+    def check_if_user_already_requested_entry_in_spot(self, id_user: UUID, id_spot: UUID) -> bool:
         finder = self.repository.finder
 
-        requests = (finder.filtered_by_id_spot(id_spot).filtered_by_id_user(id_user)).all()
+        requests = (
+            finder.filtered_by_id_spot(id_spot)
+            .filtered_by_id_user(id_user)
+            .filtered_by_status(status=EntryRequestStatus.REQUEST)
+        ).all()
 
         return len(requests) > 0
